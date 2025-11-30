@@ -93,24 +93,24 @@ const Products = () => {
 
               {/* Filter Toggles */}
               <div className="flex flex-wrap gap-3">
-                <Select value={selectedCategory} onValueChange={(v) => updateFilter('category', v)}>
+                <Select value={selectedCategory || 'all'} onValueChange={(v) => updateFilter('category', v === 'all' ? '' : v)}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Categories</SelectItem>
+                    <SelectItem value="all">All Categories</SelectItem>
                     {categories.map((cat) => (
                       <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
 
-                <Select value={selectedGrade} onValueChange={(v) => updateFilter('grade', v)}>
+                <Select value={selectedGrade || 'all'} onValueChange={(v) => updateFilter('grade', v === 'all' ? '' : v)}>
                   <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Grade" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Grades</SelectItem>
+                    <SelectItem value="all">All Grades</SelectItem>
                     {grades.map((grade) => (
                       <SelectItem key={grade} value={grade}>Grade {grade}</SelectItem>
                     ))}
