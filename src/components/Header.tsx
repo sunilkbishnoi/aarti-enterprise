@@ -102,7 +102,7 @@ const Header = () => {
                 <Phone className="w-4 h-4" /> Kishanlal: +91 94270 55205
               </a>
               <a href="tel:+919982569415" className="flex items-center gap-2 text-sm text-muted-foreground">
-                <Phone className="w-4 h-4" /> Harish: +91 99825 69415
+                <Phone className="w-4 h-4" /> Kapil: +91 99825 69415
               </a>
             </div>
           </nav>
