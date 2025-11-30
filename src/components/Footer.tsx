@@ -73,7 +73,7 @@ const Footer = () => {
                   <Phone className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <div>
                     <p>+91 99825 69415</p>
-                    <p className="text-xs">Harish Bishnoi</p>
+                    <p className="text-xs">Kapil Bishnoi</p>
                   </div>
                 </a>
               </li>

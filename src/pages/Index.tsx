@@ -1,4 +1,5 @@
 import { Helmet } from 'react-helmet-async';
+import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import CategoryCards from '@/components/CategoryCards';
@@ -57,6 +58,7 @@ const Index = () => {
       </Helmet>
 
       <div className="min-h-screen">
+        <TopBar />
         <Header />
         <main>
           <HeroSection />

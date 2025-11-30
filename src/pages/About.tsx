@@ -113,7 +113,7 @@ const About = () => {
                   <p className="leading-relaxed mb-6">
                     Our founders, the Bishnoi family, brought decades of industry experience and a 
                     deep understanding of customer needs. Today, led by Kishanlal Bishnoi and 
-                    Harish Bishnoi, we continue to uphold the values of quality, integrity, and 
+                    Kapil Bishnoi, we continue to uphold the values of quality, integrity, and 
                     customer-first service.
                   </p>
                   <p className="leading-relaxed">
@@ -163,7 +163,7 @@ const About = () => {
                   <div className="w-24 h-24 rounded-full bg-gradient-gold mx-auto mb-4 flex items-center justify-center">
                     <Users className="w-12 h-12 text-primary-foreground" />
                   </div>
-                  <h3 className="font-display text-xl font-bold mb-1">Harish Bishnoi</h3>
+                  <h3 className="font-display text-xl font-bold mb-1">Kapil Bishnoi</h3>
                   <p className="text-muted-foreground mb-4">Director - Operations</p>
                   <a href="tel:+919982569415" className="text-primary hover:underline">
                     +91 99825 69415
