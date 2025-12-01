@@ -1,33 +1,40 @@
+import projectDholera from '@/assets/project-dholera.jpg';
+import projectItcNarmada from '@/assets/project-itc-narmada.jpg';
+import projectSayaji from '@/assets/project-sayaji.jpg';
+import projectReliance from '@/assets/project-reliance.jpg';
+import projectVillas from '@/assets/project-villas.jpg';
+import projectFarmhouse from '@/assets/project-farmhouse.jpg';
+
 const projects = [
   {
     name: 'Dholera Smart City',
     client: 'L&T Construction',
-    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&q=80',
+    image: projectDholera,
   },
   {
     name: 'ITC Narmada Hotel',
     client: 'Ahmedabad',
-    image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80',
+    image: projectItcNarmada,
   },
   {
     name: 'Sayaji Hotel',
     client: 'Vadodara',
-    image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80',
+    image: projectSayaji,
   },
   {
     name: 'Reliance Corporate Park',
     client: 'Ahmedabad',
-    image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=600&q=80',
+    image: projectReliance,
   },
   {
     name: 'Luxury Villa Projects',
     client: '50+ Completed',
-    image: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&q=80',
+    image: projectVillas,
   },
   {
     name: 'Premium Farmhouses',
     client: 'Across Gujarat',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
+    image: projectFarmhouse,
   },
 ];
 
