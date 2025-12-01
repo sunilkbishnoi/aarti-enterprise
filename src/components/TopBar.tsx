@@ -9,9 +9,9 @@ const TopBar = () => {
             <Phone className="w-3.5 h-3.5 text-primary" />
             <span>+91 94270 55205</span>
           </a>
-          <a href="tel:+919982569415" className="flex items-center gap-2 hover:text-primary transition-colors">
+          <a href="tel:+919825355205" className="flex items-center gap-2 hover:text-primary transition-colors">
             <Phone className="w-3.5 h-3.5 text-primary" />
-            <span>+91 99825 69415</span>
+            <span>+91 98253 55205</span>
           </a>
           <a href="mailto:aartienterprise05@gmail.com" className="flex items-center gap-2 hover:text-primary transition-colors">
             <Mail className="w-3.5 h-3.5 text-primary" />

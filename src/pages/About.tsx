@@ -165,8 +165,8 @@ const About = () => {
                   </div>
                   <h3 className="font-display text-xl font-bold mb-1">Kapil Bishnoi</h3>
                   <p className="text-muted-foreground mb-4">Director - Operations</p>
-                  <a href="tel:+919982569415" className="text-primary hover:underline">
-                    +91 99825 69415
+                  <a href="tel:+919825355205" className="text-primary hover:underline">
+                    +91 98253 55205
                   </a>
                 </div>
               </div>

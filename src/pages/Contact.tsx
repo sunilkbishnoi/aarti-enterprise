@@ -53,9 +53,9 @@ const Contact = () => {
     {
       type: 'Shop',
       address: 'Shop No.7, Yamuna Mill Complex, Pratapnagar - Dabhoi Road, Vadodara, Gujarat - 390004',
-      phone: '+91 99825 69415',
+      phone: '+91 98253 55205',
       contact: 'Kapil Bishnoi',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.5!2d73.15!3d22.28!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDE2JzQ4LjAiTiA3M8KwMDknMDAuMCJF!5e0!3m2!1sen!2sin!4v1234567890',
+      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.169!2d73.1392!3d22.2965!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5a69753d8ef%3A0x4b4b4b4b4b4b4b4b!2sYamuna%20Mill%20Complex!5e0!3m2!1sen!2sin!4v1234567890',
     },
   ];
 
@@ -173,8 +173,8 @@ const Contact = () => {
                         <a href="tel:+919427055205" className="block text-muted-foreground hover:text-primary transition-colors">
                           +91 94270 55205 (Kishanlal Bishnoi)
                         </a>
-                        <a href="tel:+919982569415" className="block text-muted-foreground hover:text-primary transition-colors">
-                          +91 99825 69415 (Kapil Bishnoi)
+                        <a href="tel:+919825355205" className="block text-muted-foreground hover:text-primary transition-colors">
+                          +91 98253 55205 (Kapil Bishnoi)
                         </a>
                       </div>
                     </div>
