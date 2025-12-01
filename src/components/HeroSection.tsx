@@ -102,7 +102,7 @@ const HeroSection = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button size="lg" variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-charcoal gap-2 text-base">
+              <Button size="lg" variant="outline" className="border-white text-white bg-charcoal/50 hover:bg-primary hover:text-charcoal hover:border-primary gap-2 text-base">
                 <MessageCircle className="w-5 h-5" />
                 Get Quote on WhatsApp
               </Button>
