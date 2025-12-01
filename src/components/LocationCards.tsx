@@ -9,7 +9,7 @@ const locations = [
     contact: 'Kishanlal Bishnoi',
     hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
     mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.169!2d73.1234!3d22.2934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5a6d8d0c3d5%3A0x8f0f0f0f0f0f0f0f!2sK.P.%20Land%20Mark!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin',
-    directionsUrl: 'https://maps.app.goo.gl/2PfNzXPfXLg3cHMH7',
+    directionsUrl: 'https://maps.app.goo.gl/ZTFu6y63RL9ujm6z6',
   },
   {
     type: 'Shop',
@@ -18,7 +18,7 @@ const locations = [
     contact: 'Kapil Bishnoi',
     hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
     mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.5!2d73.15!3d22.28!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5b0d0d0d0d0%3A0x9f9f9f9f9f9f9f9f!2sYamuna%20Mill%20Complex!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin',
-    directionsUrl: 'https://maps.app.goo.gl/yWDiHBbX6yf3aXGh7',
+    directionsUrl: 'https://maps.app.goo.gl/8fR9rexnputjvrVB8',
   },
 ];
 

@@ -49,6 +49,7 @@ const Contact = () => {
       phone: '+91 94270 55205',
       contact: 'Kishanlal Bishnoi',
       mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.5!2d73.12!3d22.29!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDE3JzI0LjAiTiA3M8KwMDcnMTIuMCJF!5e0!3m2!1sen!2sin!4v1234567890',
+      directionsUrl: 'https://maps.app.goo.gl/ZTFu6y63RL9ujm6z6',
     },
     {
       type: 'Shop',
@@ -56,6 +57,7 @@ const Contact = () => {
       phone: '+91 98253 55205',
       contact: 'Kapil Bishnoi',
       mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.169!2d73.1392!3d22.2965!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5a69753d8ef%3A0x4b4b4b4b4b4b4b4b!2sYamuna%20Mill%20Complex!5e0!3m2!1sen!2sin!4v1234567890',
+      directionsUrl: 'https://maps.app.goo.gl/8fR9rexnputjvrVB8',
     },
   ];
 
@@ -245,10 +247,20 @@ const Contact = () => {
                       </p>
                       <a 
                         href={`tel:${location.phone.replace(/\s/g, '')}`}
-                        className="flex items-center gap-2 text-foreground hover:text-primary transition-colors"
+                        className="flex items-center gap-2 text-foreground hover:text-primary transition-colors mb-4"
                       >
                         <Phone className="w-4 h-4" />
                         {location.phone} ({location.contact})
+                      </a>
+                      <a 
+                        href={location.directionsUrl} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        <Button className="w-full gap-2 bg-primary hover:bg-primary/90 text-primary-foreground">
+                          <MapPin className="w-4 h-4" />
+                          Get Directions
+                        </Button>
                       </a>
                     </div>
                   </div>
