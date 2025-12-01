@@ -1,5 +1,11 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Cylinder, Square, Sparkles, Fence, GlassWater, LayoutGrid } from 'lucide-react';
+import categorySsPipes from '@/assets/category-ss-pipes.jpg';
+import categorySsSheets from '@/assets/category-ss-sheets.jpg';
+import categoryDesignerSheets from '@/assets/category-designer-sheets.jpg';
+import categorySsRailing from '@/assets/category-ss-railing.jpg';
+import categoryGlassRailing from '@/assets/category-glass-railing.jpg';
+import categoryAluminium from '@/assets/category-aluminium.jpg';
 
 const categories = [
   {
@@ -7,7 +13,7 @@ const categories = [
     name: 'SS Pipes',
     description: 'Round, Square, Rectangle & Oval pipes in all grades',
     icon: Cylinder,
-    image: 'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?w=600&q=80',
+    image: categorySsPipes,
     color: 'from-steel/20 to-steel-dark/30',
   },
   {
@@ -15,7 +21,7 @@ const categories = [
     name: 'SS Sheets & Plates',
     description: 'Plain, Mirror & Hairline finish sheets',
     icon: Square,
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80',
+    image: categorySsSheets,
     color: 'from-charcoal-light/20 to-charcoal/30',
   },
   {
@@ -23,7 +29,7 @@ const categories = [
     name: 'Designer Sheets',
     description: 'Gold, Rose Gold, Black PVD coated sheets',
     icon: Sparkles,
-    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=600&q=80',
+    image: categoryDesignerSheets,
     color: 'from-gold/20 to-rosegold/30',
   },
   {
@@ -31,7 +37,7 @@ const categories = [
     name: 'SS Railing',
     description: 'Balusters, Handrails & Accessories',
     icon: Fence,
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&q=80',
+    image: categorySsRailing,
     color: 'from-steel-dark/20 to-charcoal/30',
   },
   {
@@ -39,7 +45,7 @@ const categories = [
     name: 'Glass Railing',
     description: 'Spider fittings, Clamps & U-Channels',
     icon: GlassWater,
-    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&q=80',
+    image: categoryGlassRailing,
     color: 'from-blue-500/10 to-steel/20',
   },
   {
@@ -47,7 +53,7 @@ const categories = [
     name: 'Aluminium Sections',
     description: 'Windows, Doors & Partitions',
     icon: LayoutGrid,
-    image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=600&q=80',
+    image: categoryAluminium,
     color: 'from-muted/50 to-steel/30',
   },
 ];
