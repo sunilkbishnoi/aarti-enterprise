@@ -6,69 +6,79 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 
+import galleryGlassRailing from '@/assets/gallery-glass-railing.jpg';
+import gallerySsBaluster from '@/assets/gallery-ss-baluster.jpg';
+import galleryGoldPvd from '@/assets/gallery-gold-pvd.jpg';
+import gallerySpiralRailing from '@/assets/gallery-spiral-railing.jpg';
+import galleryAluminiumWindow from '@/assets/gallery-aluminium-window.jpg';
+import galleryRosegoldElevator from '@/assets/gallery-rosegold-elevator.jpg';
+import galleryGlassPartition from '@/assets/gallery-glass-partition.jpg';
+import galleryBlackMirror from '@/assets/gallery-black-mirror.jpg';
+import galleryBalconyGlass from '@/assets/gallery-balcony-glass.jpg';
+
 const galleryItems = [
   {
     id: 1,
     category: 'railing',
     title: 'Modern Glass Railing',
     description: 'Elegant glass railing installation in luxury apartment',
-    image: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&q=80',
+    image: galleryGlassRailing,
   },
   {
     id: 2,
     category: 'railing',
     title: 'SS Baluster Railing',
     description: 'Classic stainless steel baluster design',
-    image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
+    image: gallerySsBaluster,
   },
   {
     id: 3,
     category: 'designer',
     title: 'Gold PVD Panel Wall',
     description: 'Designer gold PVD sheets in hotel lobby',
-    image: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80',
+    image: galleryGoldPvd,
   },
   {
     id: 4,
     category: 'railing',
     title: 'Spiral Staircase Railing',
     description: 'Custom SS railing for spiral staircase',
-    image: 'https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800&q=80',
+    image: gallerySpiralRailing,
   },
   {
     id: 5,
     category: 'aluminium',
     title: 'Aluminium Window Installation',
     description: 'Modern aluminium sliding windows',
-    image: 'https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&q=80',
+    image: galleryAluminiumWindow,
   },
   {
     id: 6,
     category: 'designer',
     title: 'Rose Gold Elevator Panels',
     description: 'Elegant rose gold PVD elevator interiors',
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',
+    image: galleryRosegoldElevator,
   },
   {
     id: 7,
     category: 'railing',
     title: 'Office Glass Partition',
     description: 'Frameless glass partition with SS fittings',
-    image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=800&q=80',
+    image: galleryGlassPartition,
   },
   {
     id: 8,
     category: 'designer',
     title: 'Black Mirror Sheet Wall',
     description: 'Stunning black mirror finish feature wall',
-    image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+    image: galleryBlackMirror,
   },
   {
     id: 9,
     category: 'railing',
     title: 'Balcony Glass Railing',
     description: 'Frameless glass railing with U-channel',
-    image: 'https://images.unsplash.com/photo-1600573472591-ee6c563aaec3?w=800&q=80',
+    image: galleryBalconyGlass,
   },
 ];
 
