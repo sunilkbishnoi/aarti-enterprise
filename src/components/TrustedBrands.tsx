@@ -1,10 +1,17 @@
+import brandJindal from '@/assets/brand-jindal.png';
+import brandSalem from '@/assets/brand-salem.png';
+import brandPosco from '@/assets/brand-posco.png';
+import brandViraj from '@/assets/brand-viraj.png';
+import brandTata from '@/assets/brand-tata.png';
+import brandArcelormittal from '@/assets/brand-arcelormittal.png';
+
 const brands = [
-  { name: "Jindal Stainless", description: "Premium Quality" },
-  { name: "Salem Steel", description: "SAIL Certified" },
-  { name: "POSCO", description: "Korean Excellence" },
-  { name: "Viraj Profiles", description: "Industry Leader" },
-  { name: "TATA Steel", description: "Trusted Brand" },
-  { name: "Arcelor Mittal", description: "Global Standard" },
+  { name: "Jindal Stainless", logo: brandJindal },
+  { name: "Salem Steel", logo: brandSalem },
+  { name: "POSCO", logo: brandPosco },
+  { name: "Viraj Profiles", logo: brandViraj },
+  { name: "TATA Steel", logo: brandTata },
+  { name: "ArcelorMittal", logo: brandArcelormittal },
 ];
 
 const TrustedBrands = () => {
@@ -25,15 +32,16 @@ const TrustedBrands = () => {
               key={brand.name}
               className="group bg-card border border-border rounded-xl p-4 md:p-6 flex flex-col items-center justify-center text-center hover:border-primary/50 hover:shadow-lg transition-all duration-300"
             >
-              <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:bg-primary/20 transition-colors">
-                <span className="text-xl md:text-2xl font-bold text-primary">
-                  {brand.name.charAt(0)}
-                </span>
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg bg-white flex items-center justify-center mb-3 overflow-hidden">
+                <img 
+                  src={brand.logo} 
+                  alt={brand.name}
+                  className="w-full h-full object-contain p-2"
+                />
               </div>
-              <h3 className="font-semibold text-sm md:text-base text-foreground group-hover:text-primary transition-colors">
+              <h3 className="font-semibold text-xs md:text-sm text-foreground group-hover:text-primary transition-colors">
                 {brand.name}
               </h3>
-              <p className="text-xs text-muted-foreground mt-1">{brand.description}</p>
             </div>
           ))}
         </div>
