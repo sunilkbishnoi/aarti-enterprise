@@ -49,7 +49,7 @@ const Inquiry = () => {
   return (
     <>
       <Helmet>
-        <title>Inquiry Cart ({items.length} items) - AARTI ENTERPRISE</title>
+        <title>{`Inquiry Cart (${items.length} items) - AARTI ENTERPRISE`}</title>
       </Helmet>
 
       <div className="min-h-screen bg-background">
