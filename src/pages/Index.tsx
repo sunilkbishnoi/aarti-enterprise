@@ -3,6 +3,7 @@ import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import CategoryCards from '@/components/CategoryCards';
+import TrustedBrands from '@/components/TrustedBrands';
 import TrustedProjects from '@/components/TrustedProjects';
 import FeaturedProducts from '@/components/FeaturedProducts';
 import WhyChooseUs from '@/components/WhyChooseUs';
@@ -63,6 +64,7 @@ const Index = () => {
         <main>
           <HeroSection />
           <CategoryCards />
+          <TrustedBrands />
           <TrustedProjects />
           <FeaturedProducts />
           <WhyChooseUs />
