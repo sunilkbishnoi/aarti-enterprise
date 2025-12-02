@@ -23,13 +23,17 @@ const Header = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
+          <Link 
+            to="/" 
+            className="flex items-center gap-2 sm:gap-3"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
             <Logo />
-            <div className="hidden sm:block">
-              <h1 className="font-display text-lg md:text-xl font-bold text-foreground leading-tight">
+            <div>
+              <h1 className="font-display text-sm sm:text-lg md:text-xl font-bold text-foreground leading-tight">
                 AARTI ENTERPRISE
               </h1>
-              <p className="text-xs text-muted-foreground">Premium SS & Aluminium</p>
+              <p className="hidden sm:block text-xs text-muted-foreground">Premium SS & Aluminium</p>
             </div>
           </Link>
 
