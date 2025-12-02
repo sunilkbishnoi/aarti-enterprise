@@ -99,11 +99,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         {/* Content */}
-        <div className="p-4">
-          <h3 className="font-medium text-foreground group-hover:text-primary transition-colors line-clamp-1 mb-1">
+        <div className="p-3 sm:p-4">
+          <h3 className="font-medium text-sm sm:text-base text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-1 leading-tight">
             {product.name}
           </h3>
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 mb-2 sm:mb-3">
             {product.description}
           </p>
           
