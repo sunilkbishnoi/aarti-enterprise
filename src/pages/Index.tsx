@@ -8,6 +8,7 @@ import TrustedProjects from '@/components/TrustedProjects';
 import FeaturedProducts from '@/components/FeaturedProducts';
 import WhyChooseUs from '@/components/WhyChooseUs';
 import Testimonials from '@/components/Testimonials';
+import VideoShowcase from '@/components/VideoShowcase';
 import LocationCards from '@/components/LocationCards';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
@@ -69,6 +70,7 @@ const Index = () => {
           <FeaturedProducts />
           <WhyChooseUs />
           <Testimonials />
+          <VideoShowcase />
           <LocationCards />
         </main>
         <Footer />
