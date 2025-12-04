@@ -1,71 +1,148 @@
-import { Shield, IndianRupee, Package, Truck, Award, Users } from 'lucide-react';
+import { Shield, IndianRupee, Package, Truck, Award, Users, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const features = [
   {
     icon: Shield,
-    title: 'Quality Products',
-    description: 'Premium grade SS 202, 304, 316 materials with mill test certificates',
+    title: 'Certified Quality',
+    description: 'Premium grade SS 202, 304, 316 materials with mill test certificates & quality assurance',
+    highlight: 'ISO Certified',
   },
   {
     icon: IndianRupee,
-    title: 'Best Price in Gujarat',
-    description: 'Competitive wholesale prices with transparent pricing - no hidden costs',
+    title: 'Best Market Price',
+    description: 'Competitive wholesale rates with transparent pricing. No hidden costs, guaranteed best deal',
+    highlight: 'Price Match',
   },
   {
     icon: Package,
-    title: 'Ready Stock',
-    description: 'Largest inventory in Vadodara - immediate dispatch for urgent orders',
+    title: 'Massive Inventory',
+    description: 'Largest stock in Vadodara region - over 500+ products ready for immediate dispatch',
+    highlight: '500+ Products',
   },
   {
     icon: Truck,
-    title: 'Fast Delivery',
-    description: 'Same-day delivery in Vadodara, 2-3 days across Gujarat',
+    title: 'Express Delivery',
+    description: 'Same-day delivery in Vadodara, 24-48 hours across Gujarat with real-time tracking',
+    highlight: 'Same Day',
   },
   {
     icon: Award,
-    title: '10+ Years Experience',
-    description: 'Trusted family business serving Gujarat since over a decade',
+    title: 'Industry Experience',
+    description: 'Over a decade of trusted service to builders, architects & industrial clients',
+    highlight: '10+ Years',
   },
   {
     icon: Users,
-    title: 'Expert Team',
-    description: 'Skilled installation team for railings, glass fittings & more',
+    title: 'Expert Installation',
+    description: 'Skilled technical team for railings, glass fittings & custom fabrication work',
+    highlight: 'Full Service',
   },
+];
+
+const benefits = [
+  'Free Technical Consultation',
+  'Custom Fabrication Services',
+  'Bulk Order Discounts',
+  'After-Sales Support',
 ];
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-20 bg-charcoal text-secondary">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-14">
-          <p className="text-primary font-medium mb-3">WHY CHOOSE US</p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
-            Trusted by Thousands
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            AARTI ENTERPRISE has been serving Vadodara and Gujarat with premium stainless steel 
-            and aluminium products. Here's why customers choose us.
-          </p>
+    <section className="section-padding section-dark relative overflow-hidden">
+      {/* Background Effects */}
+      <div className="absolute inset-0 bg-mesh opacity-30" />
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+      <div className="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+      
+      <div className="container mx-auto px-4 relative z-10">
+        {/* Header */}
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center mb-16">
+          <div>
+            <span className="badge-modern mb-4">Why Choose Us</span>
+            <h2 className="font-display text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+              Trusted by <span className="text-gradient-gold">5000+ Clients</span> Across Gujarat
+            </h2>
+            <p className="text-lg text-white/60 leading-relaxed">
+              AARTI ENTERPRISE has been the preferred choice for builders, architects, and industrial 
+              clients seeking premium stainless steel and aluminium products with uncompromising quality.
+            </p>
+          </div>
+          
+          <div className="glass-dark rounded-2xl p-8">
+            <h3 className="font-display text-xl font-semibold text-white mb-6">What You Get</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {benefits.map((benefit, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center gap-3 animate-fade-up"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
+                  <span className="text-white/80 text-sm font-medium">{benefit}</span>
+                </div>
+              ))}
+            </div>
+            <Link to="/contact" className="mt-8 block">
+              <Button className="w-full btn-modern h-12 gap-2 group">
+                Get Free Consultation
+                <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Features Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => (
             <div
               key={index}
-              className="p-6 rounded-xl bg-charcoal-light/50 border border-charcoal-light hover:border-primary/50 transition-all duration-300 group animate-fade-up"
+              className="group card-premium p-8 animate-fade-up"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-5 group-hover:bg-primary/20 transition-colors">
-                <feature.icon className="w-7 h-7 text-primary" />
+              {/* Highlight Badge */}
+              <div className="absolute top-4 right-4">
+                <span className="px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 rounded-full">
+                  {feature.highlight}
+                </span>
               </div>
-              <h3 className="font-display text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
+              
+              {/* Icon */}
+              <div className="icon-modern mb-6">
+                <feature.icon className="w-6 h-6" />
+              </div>
+              
+              {/* Content */}
+              <h3 className="font-display text-xl font-bold text-white mb-3 group-hover:text-primary transition-colors">
                 {feature.title}
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-white/60 leading-relaxed">
                 {feature.description}
               </p>
+
+              {/* Hover Line */}
+              <div className="absolute bottom-0 left-0 w-0 h-1 bg-gradient-gold group-hover:w-full transition-all duration-500" />
             </div>
           ))}
+        </div>
+
+        {/* CTA Section */}
+        <div className="mt-16 text-center">
+          <p className="text-white/50 mb-6">Ready to start your project?</p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <a href="tel:+919427055205">
+              <Button size="lg" className="btn-modern h-14 px-8 gap-3">
+                Call Now: +91 94270 55205
+              </Button>
+            </a>
+            <Link to="/products">
+              <Button size="lg" variant="outline" className="h-14 px-8 border-2 border-primary/30 text-primary hover:bg-primary hover:text-charcoal gap-2">
+                Browse Products
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </section>
