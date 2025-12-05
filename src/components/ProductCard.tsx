@@ -9,9 +9,10 @@ import type { Product } from '@/data/products';
 
 interface ProductCardProps {
   product: Product;
+  compact?: boolean;
 }
 
-const ProductCard = ({ product }: ProductCardProps) => {
+const ProductCard = ({ product, compact = false }: ProductCardProps) => {
   const [added, setAdded] = useState(false);
   const { addItem } = useInquiry();
   const { toast } = useToast();
@@ -106,27 +107,31 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         {/* Content */}
-        <div className="p-4">
-          <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-2 leading-tight">
+        <div className={compact ? "p-3" : "p-4"}>
+          <h3 className={`font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-tight ${compact ? 'text-sm mb-1' : 'mb-2'}`}>
             {product.name}
           </h3>
-          <p className="text-xs text-muted-foreground line-clamp-2 mb-4">
-            {product.description}
-          </p>
+          {!compact && (
+            <p className="text-xs text-muted-foreground line-clamp-2 mb-4">
+              {product.description}
+            </p>
+          )}
           
           <div className="flex items-end justify-between">
             <div>
               <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">Starting from</p>
-              <p className="text-xl font-bold text-gradient-gold">₹{price.toLocaleString('en-IN')}</p>
+              <p className={`font-bold text-gradient-gold ${compact ? 'text-base' : 'text-xl'}`}>₹{price.toLocaleString('en-IN')}</p>
             </div>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="text-xs h-9 border-border hover:border-primary hover:bg-primary/5 gap-1.5 rounded-lg"
-            >
-              <Eye className="w-3.5 h-3.5" />
-              Details
-            </Button>
+            {!compact && (
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="text-xs h-9 border-border hover:border-primary hover:bg-primary/5 gap-1.5 rounded-lg"
+              >
+                <Eye className="w-3.5 h-3.5" />
+                Details
+              </Button>
+            )}
           </div>
         </div>
       </Link>
