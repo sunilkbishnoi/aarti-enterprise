@@ -78,11 +78,10 @@ const HeroSection = () => {
       <div className="container mx-auto px-4 relative z-20">
         <div className="max-w-4xl">
           {/* Badge */}
-          <div className="overflow-hidden mb-6">
-            <div className="badge-premium animate-fade-up inline-flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5" />
+          <div className="overflow-hidden mb-8">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-gradient-gold animate-fade-up tracking-wide">
               AARTI ENTERPRISE
-            </div>
+            </h2>
           </div>
           
           <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6 leading-[1.1] animate-fade-up animation-delay-100">
