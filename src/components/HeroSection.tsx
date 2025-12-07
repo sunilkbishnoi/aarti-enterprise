@@ -79,7 +79,7 @@ const HeroSection = () => {
         <div className="max-w-4xl">
           {/* Badge */}
           <div className="overflow-hidden mb-8">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black uppercase whitespace-nowrap animate-fade-up tracking-[0.15em] text-transparent bg-clip-text bg-[length:200%_auto] animate-shine bg-gradient-to-r from-primary via-gold-light via-50% to-primary drop-shadow-[0_0_40px_rgba(212,175,55,0.5)]">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black uppercase whitespace-nowrap tracking-[0.12em] text-primary drop-shadow-[0_0_30px_rgba(212,175,55,0.6)] [text-shadow:_0_0_40px_rgba(212,175,55,0.4),_0_2px_0_rgba(0,0,0,0.3)]">
               AARTI ENTERPRISE
             </h2>
           </div>
