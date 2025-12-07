@@ -457,6 +457,10 @@
     animation: glow 2s ease-in-out infinite alternate;
   }
 
+  .animate-shine {
+    animation: textShine 3s ease-in-out infinite;
+  }
+
   .animate-bounce-soft {
     animation: bounceSoft 2s ease-in-out infinite;
   }
@@ -552,6 +556,11 @@
 @keyframes glow {
   from { box-shadow: 0 0 20px hsla(38, 92%, 50%, 0.3); }
   to { box-shadow: 0 0 40px hsla(38, 92%, 50%, 0.6); }
+}
+
+@keyframes textShine {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 @keyframes bounceSoft {
