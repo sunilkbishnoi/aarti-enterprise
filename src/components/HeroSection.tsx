@@ -79,10 +79,12 @@ const HeroSection = () => {
         <div className="max-w-4xl">
           {/* Badge */}
           <div className="mb-6">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-black uppercase tracking-[0.08em] text-white drop-shadow-lg">
-              AARTI ENTERPRISE
-            </h2>
-            <div className="h-1 w-32 bg-gradient-to-r from-primary to-gold-light mt-4 rounded-full"></div>
+            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+              <span className="text-lg md:text-xl font-display font-bold tracking-[0.2em] uppercase text-white">
+                AARTI ENTERPRISE
+              </span>
+            </div>
           </div>
           
           <h1 className="font-display text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6 leading-[1.1] animate-fade-up animation-delay-100">
