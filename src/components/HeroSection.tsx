@@ -78,12 +78,13 @@ const HeroSection = () => {
       <div className="container mx-auto px-4 relative z-20">
         <div className="max-w-4xl">
           {/* Badge */}
-          <div className="mb-6">
-            <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-white/20 bg-white/5 backdrop-blur-sm">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-              <span className="text-lg md:text-xl font-display font-bold tracking-[0.2em] uppercase text-white">
+          <div className="mb-8">
+            <div className="inline-flex items-center gap-4 px-6 py-3 rounded-full border border-primary/30 bg-gradient-to-r from-primary/10 via-white/5 to-primary/10 backdrop-blur-md shadow-[0_0_30px_rgba(212,175,55,0.2)] hover:shadow-[0_0_40px_rgba(212,175,55,0.4)] transition-all duration-500 group">
+              <div className="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_10px_rgba(212,175,55,0.8)] animate-pulse"></div>
+              <span className="text-xl md:text-2xl font-display font-bold tracking-[0.15em] uppercase text-white group-hover:text-primary transition-colors duration-300">
                 AARTI ENTERPRISE
               </span>
+              <div className="w-2.5 h-2.5 rounded-full bg-primary shadow-[0_0_10px_rgba(212,175,55,0.8)] animate-pulse"></div>
             </div>
           </div>
           
