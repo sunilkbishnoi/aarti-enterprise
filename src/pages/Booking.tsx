@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, User, Phone, Mail, MessageSquare, CheckCircle2, Loader2, CalendarCheck, MapPin, Sparkles } from 'lucide-react';
-import { format, addDays, isSameDay, isAfter, isBefore, startOfDay } from 'date-fns';
+import { format, addDays, isSameDay } from 'date-fns';
 
 interface TimeSlot {
   id: string;
@@ -38,8 +38,6 @@ const purposes = [
   'Price Quotation',
   'Other'
 ];
-
-const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const Booking = () => {
   const { toast } = useToast();
@@ -178,9 +176,9 @@ const Booking = () => {
           <title>Booking Confirmed | AARTI ENTERPRISE</title>
         </Helmet>
         <Header />
-        <main className="min-h-screen bg-gradient-dark py-12">
+        <main className="min-h-screen bg-background py-12">
           <div className="container mx-auto px-4">
-            <Card className="max-w-lg mx-auto bg-charcoal-light/50 backdrop-blur-xl border-charcoal-medium text-center">
+            <Card className="max-w-lg mx-auto bg-card border-border text-center shadow-xl">
               <CardContent className="py-12">
                 <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                   <CheckCircle2 className="w-10 h-10 text-white" />
@@ -189,20 +187,19 @@ const Booking = () => {
                 <p className="text-muted-foreground mb-6">
                   Thank you, {form.customer_name}! Your appointment has been scheduled for:
                 </p>
-                <div className="bg-charcoal/50 rounded-xl p-4 mb-6">
+                <div className="bg-primary/10 rounded-xl p-4 mb-6 border border-primary/20">
                   <p className="text-lg font-semibold text-primary">
                     {selectedDate && format(selectedDate, 'EEEE, MMMM d, yyyy')}
                   </p>
                   <p className="text-muted-foreground">at {selectedTime}</p>
                 </div>
                 <p className="text-sm text-muted-foreground mb-6">
-                  We'll contact you at <span className="text-foreground">{form.customer_phone}</span> to confirm.
+                  We'll contact you at <span className="text-foreground font-medium">{form.customer_phone}</span> to confirm.
                 </p>
                 <div className="flex gap-3 justify-center">
                   <Button 
                     variant="outline" 
                     onClick={() => { setIsSuccess(false); setSelectedDate(null); setSelectedTime(''); setForm({ customer_name: '', customer_phone: '', customer_email: '', purpose: '', message: '' }); }}
-                    className="border-charcoal-medium text-foreground hover:bg-charcoal-medium"
                   >
                     Book Another
                   </Button>
@@ -229,10 +226,9 @@ const Booking = () => {
       
       <Header />
       
-      <main className="min-h-screen bg-gradient-dark">
+      <main className="min-h-screen bg-background">
         {/* Hero Section */}
-        <section className="relative py-16 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
+        <section className="relative py-16 overflow-hidden bg-gradient-to-b from-primary/10 via-primary/5 to-background">
           <div className="container mx-auto px-4 relative">
             <div className="text-center max-w-2xl mx-auto">
               <Badge className="bg-primary/20 text-primary border-primary/30 mb-4">
@@ -255,7 +251,7 @@ const Booking = () => {
             <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {/* Left - Info */}
               <div className="lg:col-span-1 space-y-6">
-                <Card className="bg-charcoal-light/50 backdrop-blur-xl border-charcoal-medium">
+                <Card className="bg-card border-border shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-foreground flex items-center gap-2">
                       <MapPin className="w-5 h-5 text-primary" />
@@ -304,7 +300,7 @@ const Booking = () => {
               </div>
 
               {/* Right - Form */}
-              <Card className="lg:col-span-2 bg-charcoal-light/50 backdrop-blur-xl border-charcoal-medium">
+              <Card className="lg:col-span-2 bg-card border-border shadow-xl">
                 <CardHeader>
                   <CardTitle className="text-foreground">Schedule Your Visit</CardTitle>
                   <CardDescription>Select a date and time that works for you</CardDescription>
@@ -318,7 +314,7 @@ const Booking = () => {
                     <form onSubmit={handleSubmit} className="space-y-6">
                       {/* Date Selection */}
                       <div className="space-y-3">
-                        <Label className="text-foreground flex items-center gap-2">
+                        <Label className="text-foreground flex items-center gap-2 text-base font-semibold">
                           <Calendar className="w-4 h-4 text-primary" />
                           Select Date *
                         </Label>
@@ -333,12 +329,12 @@ const Booking = () => {
                                 type="button"
                                 disabled={!available}
                                 onClick={() => { setSelectedDate(date); setSelectedTime(''); }}
-                                className={`p-3 rounded-xl text-center transition-all ${
+                                className={`p-3 rounded-xl text-center transition-all border ${
                                   isSelected
-                                    ? 'bg-primary text-primary-foreground shadow-lg scale-105'
+                                    ? 'bg-primary text-primary-foreground shadow-lg scale-105 border-primary'
                                     : available
-                                    ? 'bg-charcoal hover:bg-charcoal-medium text-foreground border border-charcoal-medium'
-                                    : 'bg-charcoal/50 text-muted-foreground/50 cursor-not-allowed'
+                                    ? 'bg-secondary hover:bg-secondary/80 text-foreground border-border hover:border-primary/50'
+                                    : 'bg-muted text-muted-foreground/50 cursor-not-allowed border-transparent'
                                 }`}
                               >
                                 <p className="text-xs font-medium">{format(date, 'EEE')}</p>
@@ -353,7 +349,7 @@ const Booking = () => {
                       {/* Time Selection */}
                       {selectedDate && (
                         <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
-                          <Label className="text-foreground flex items-center gap-2">
+                          <Label className="text-foreground flex items-center gap-2 text-base font-semibold">
                             <Clock className="w-4 h-4 text-primary" />
                             Select Time *
                           </Label>
@@ -364,12 +360,12 @@ const Booking = () => {
                                 type="button"
                                 disabled={!slot.available}
                                 onClick={() => setSelectedTime(slot.start_time)}
-                                className={`p-3 rounded-xl text-center transition-all ${
+                                className={`p-3 rounded-xl text-center transition-all border ${
                                   selectedTime === slot.start_time
-                                    ? 'bg-primary text-primary-foreground shadow-lg'
+                                    ? 'bg-primary text-primary-foreground shadow-lg border-primary'
                                     : slot.available
-                                    ? 'bg-charcoal hover:bg-charcoal-medium text-foreground border border-charcoal-medium'
-                                    : 'bg-charcoal/50 text-muted-foreground/50 cursor-not-allowed line-through'
+                                    ? 'bg-secondary hover:bg-secondary/80 text-foreground border-border hover:border-primary/50'
+                                    : 'bg-muted text-muted-foreground/50 cursor-not-allowed line-through border-transparent'
                                 }`}
                               >
                                 <p className="font-medium">{slot.start_time} - {slot.end_time}</p>
@@ -384,17 +380,17 @@ const Booking = () => {
 
                       {/* Purpose Selection */}
                       <div className="space-y-3">
-                        <Label className="text-foreground">Purpose of Visit *</Label>
+                        <Label className="text-foreground text-base font-semibold">Purpose of Visit *</Label>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                           {purposes.map((purpose) => (
                             <button
                               key={purpose}
                               type="button"
                               onClick={() => setForm({ ...form, purpose })}
-                              className={`p-3 rounded-xl text-sm text-center transition-all ${
+                              className={`p-3 rounded-xl text-sm text-center transition-all border ${
                                 form.purpose === purpose
-                                  ? 'bg-primary text-primary-foreground shadow-lg'
-                                  : 'bg-charcoal hover:bg-charcoal-medium text-foreground border border-charcoal-medium'
+                                  ? 'bg-primary text-primary-foreground shadow-lg border-primary'
+                                  : 'bg-secondary hover:bg-secondary/80 text-foreground border-border hover:border-primary/50'
                               }`}
                             >
                               {purpose}
@@ -414,7 +410,7 @@ const Booking = () => {
                             value={form.customer_name}
                             onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
                             placeholder="Enter your full name"
-                            className="bg-charcoal border-charcoal-medium text-foreground"
+                            className="bg-background border-input"
                             required
                           />
                         </div>
@@ -428,7 +424,7 @@ const Booking = () => {
                             value={form.customer_phone}
                             onChange={(e) => setForm({ ...form, customer_phone: e.target.value })}
                             placeholder="+91 98765 43210"
-                            className="bg-charcoal border-charcoal-medium text-foreground"
+                            className="bg-background border-input"
                             required
                           />
                         </div>
@@ -444,7 +440,7 @@ const Booking = () => {
                           value={form.customer_email}
                           onChange={(e) => setForm({ ...form, customer_email: e.target.value })}
                           placeholder="your@email.com"
-                          className="bg-charcoal border-charcoal-medium text-foreground"
+                          className="bg-background border-input"
                         />
                       </div>
 
@@ -457,7 +453,7 @@ const Booking = () => {
                           value={form.message}
                           onChange={(e) => setForm({ ...form, message: e.target.value })}
                           placeholder="Tell us more about what you're looking for..."
-                          className="bg-charcoal border-charcoal-medium text-foreground"
+                          className="bg-background border-input"
                           rows={3}
                         />
                       </div>
