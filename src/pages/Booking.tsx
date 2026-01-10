@@ -48,6 +48,7 @@ const Booking = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [bookingId, setBookingId] = useState<string | null>(null);
   
   const [form, setForm] = useState({
     customer_name: '',
@@ -142,7 +143,7 @@ const Booking = () => {
 
     setIsSubmitting(true);
     
-    const { error } = await supabase.from('bookings').insert({
+    const { data, error } = await supabase.from('bookings').insert({
       customer_name: form.customer_name,
       customer_phone: form.customer_phone,
       customer_email: form.customer_email || null,
@@ -150,7 +151,7 @@ const Booking = () => {
       booking_time: selectedTime,
       purpose: form.purpose,
       message: form.message || null
-    });
+    }).select('booking_id').single();
 
     setIsSubmitting(false);
 
@@ -161,10 +162,11 @@ const Booking = () => {
         variant: "destructive"
       });
     } else {
+      setBookingId(data?.booking_id || null);
       setIsSuccess(true);
       toast({
         title: "Booking Confirmed!",
-        description: "We'll contact you shortly to confirm your appointment.",
+        description: `Booking ID: ${data?.booking_id}. We'll contact you shortly.`,
       });
     }
   };
@@ -184,14 +186,47 @@ const Booking = () => {
                   <CheckCircle2 className="w-10 h-10 text-white" />
                 </div>
                 <h2 className="text-2xl font-display font-bold text-foreground mb-3">Booking Confirmed!</h2>
+                
+                {/* Booking ID Display */}
+                {bookingId && (
+                  <div className="bg-secondary rounded-lg px-4 py-2 mb-4 inline-block">
+                    <p className="text-xs text-muted-foreground">Booking ID</p>
+                    <p className="text-lg font-mono font-bold text-primary">{bookingId}</p>
+                  </div>
+                )}
+                
                 <p className="text-muted-foreground mb-6">
                   Thank you, {form.customer_name}! Your appointment has been scheduled for:
                 </p>
-                <div className="bg-primary/10 rounded-xl p-4 mb-6 border border-primary/20">
+                <div className="bg-primary/10 rounded-xl p-4 mb-4 border border-primary/20">
                   <p className="text-lg font-semibold text-primary">
                     {selectedDate && format(selectedDate, 'EEEE, MMMM d, yyyy')}
                   </p>
                   <p className="text-muted-foreground">at {selectedTime}</p>
+                </div>
+                <div className="bg-secondary/50 rounded-lg p-4 mb-6 text-left space-y-2">
+                  <div className="flex items-center gap-2 text-sm">
+                    <User className="w-4 h-4 text-primary" />
+                    <span className="text-muted-foreground">Name:</span>
+                    <span className="font-medium text-foreground">{form.customer_name}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Phone className="w-4 h-4 text-primary" />
+                    <span className="text-muted-foreground">Phone:</span>
+                    <span className="font-medium text-foreground">{form.customer_phone}</span>
+                  </div>
+                  {form.customer_email && (
+                    <div className="flex items-center gap-2 text-sm">
+                      <Mail className="w-4 h-4 text-primary" />
+                      <span className="text-muted-foreground">Email:</span>
+                      <span className="font-medium text-foreground">{form.customer_email}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2 text-sm">
+                    <MessageSquare className="w-4 h-4 text-primary" />
+                    <span className="text-muted-foreground">Purpose:</span>
+                    <span className="font-medium text-foreground">{form.purpose}</span>
+                  </div>
                 </div>
                 <p className="text-sm text-muted-foreground mb-6">
                   We'll contact you at <span className="text-foreground font-medium">{form.customer_phone}</span> to confirm.
@@ -199,7 +234,7 @@ const Booking = () => {
                 <div className="flex gap-3 justify-center">
                   <Button 
                     variant="outline" 
-                    onClick={() => { setIsSuccess(false); setSelectedDate(null); setSelectedTime(''); setForm({ customer_name: '', customer_phone: '', customer_email: '', purpose: '', message: '' }); }}
+                    onClick={() => { setIsSuccess(false); setBookingId(null); setSelectedDate(null); setSelectedTime(''); setForm({ customer_name: '', customer_phone: '', customer_email: '', purpose: '', message: '' }); }}
                   >
                     Book Another
                   </Button>
