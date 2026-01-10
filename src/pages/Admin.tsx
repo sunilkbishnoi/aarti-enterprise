@@ -16,8 +16,9 @@ import { useToast } from '@/hooks/use-toast';
 import { 
   LogOut, Plus, Pencil, Trash2, Upload, Package, 
   Tag, Layers, Image, RefreshCw, Home, AlertCircle,
-  IndianRupee, Check, X, Star, Eye, Search
+  IndianRupee, Check, X, Star, Eye, Search, CalendarCheck
 } from 'lucide-react';
+import BookingManagement from '@/components/BookingManagement';
 import logo from '@/assets/logo.png';
 
 interface Category {
@@ -498,6 +499,13 @@ const Admin = () => {
             >
               <Tag className="w-4 h-4" />
               Grades ({grades.length})
+            </TabsTrigger>
+            <TabsTrigger 
+              value="bookings" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4"
+            >
+              <CalendarCheck className="w-4 h-4" />
+              Bookings
             </TabsTrigger>
           </TabsList>
 
@@ -1078,6 +1086,15 @@ const Admin = () => {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          {/* Bookings Tab */}
+          <TabsContent value="bookings" className="space-y-4">
+            <div>
+              <h2 className="text-2xl font-display font-bold text-foreground">Bookings</h2>
+              <p className="text-muted-foreground text-sm">Manage customer appointments and consultations</p>
+            </div>
+            <BookingManagement />
           </TabsContent>
         </Tabs>
       </main>
