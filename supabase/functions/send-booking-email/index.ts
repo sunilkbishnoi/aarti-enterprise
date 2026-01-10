@@ -119,18 +119,19 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
-    // Send email to admin
+    // Send email to admin (using verified email for Resend free tier)
     const adminEmailResponse = await sendEmail(
-      ["aartienterprise05@gmail.com"],
+      ["sunilbishnoi6530@gmail.com"],
       `New Booking: ${bookingData.booking_id} - ${bookingData.customer_name}`,
       adminEmailHtml
     );
 
     console.log("Admin email sent successfully:", adminEmailResponse);
 
-    // If customer provided email, send confirmation to them too
+    // If customer provided email and it's the verified email, send confirmation
+    // Note: Resend free tier only allows sending to verified email
     let customerEmailResponse = null;
-    if (bookingData.customer_email) {
+    if (bookingData.customer_email && bookingData.customer_email === "sunilbishnoi6530@gmail.com") {
       const customerEmailHtml = `
         <!DOCTYPE html>
         <html>
