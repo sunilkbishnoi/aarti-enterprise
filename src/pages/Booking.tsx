@@ -1,0 +1,497 @@
+import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
+import WhatsAppButton from '@/components/WhatsAppButton';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, Clock, User, Phone, Mail, MessageSquare, CheckCircle2, Loader2, CalendarCheck, MapPin, Sparkles } from 'lucide-react';
+import { format, addDays, isSameDay, isAfter, isBefore, startOfDay } from 'date-fns';
+
+interface TimeSlot {
+  id: string;
+  day_of_week: number;
+  start_time: string;
+  end_time: string;
+  is_active: boolean;
+  max_bookings_per_slot: number;
+}
+
+interface Booking {
+  id: string;
+  booking_date: string;
+  booking_time: string;
+  status: string;
+}
+
+const purposes = [
+  'Product Inquiry & Demo',
+  'Bulk Order Discussion',
+  'Site Visit / Measurement',
+  'Custom Fabrication Consultation',
+  'Price Quotation',
+  'Other'
+];
+
+const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+const Booking = () => {
+  const { toast } = useToast();
+  const [availableSlots, setAvailableSlots] = useState<TimeSlot[]>([]);
+  const [existingBookings, setExistingBookings] = useState<Booking[]>([]);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const [form, setForm] = useState({
+    customer_name: '',
+    customer_phone: '',
+    customer_email: '',
+    purpose: '',
+    message: ''
+  });
+
+  // Generate next 14 days
+  const dateOptions = Array.from({ length: 14 }, (_, i) => addDays(new Date(), i + 1));
+
+  useEffect(() => {
+    fetchSlots();
+    fetchBookings();
+    
+    // Real-time subscription for bookings
+    const channel = supabase
+      .channel('booking-updates')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'bookings' }, () => {
+        fetchBookings();
+      })
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const fetchSlots = async () => {
+    const { data, error } = await supabase
+      .from('available_slots')
+      .select('*')
+      .eq('is_active', true)
+      .order('day_of_week')
+      .order('start_time');
+    
+    if (!error && data) {
+      setAvailableSlots(data);
+    }
+    setIsLoading(false);
+  };
+
+  const fetchBookings = async () => {
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const { data, error } = await supabase
+      .from('bookings')
+      .select('id, booking_date, booking_time, status')
+      .gte('booking_date', today)
+      .in('status', ['pending', 'confirmed']);
+    
+    if (!error && data) {
+      setExistingBookings(data);
+    }
+  };
+
+  const getSlotsForDate = (date: Date) => {
+    const dayOfWeek = date.getDay();
+    const slotsForDay = availableSlots.filter(s => s.day_of_week === dayOfWeek);
+    
+    // Count bookings for each slot
+    const dateStr = format(date, 'yyyy-MM-dd');
+    return slotsForDay.map(slot => {
+      const bookingsForSlot = existingBookings.filter(
+        b => b.booking_date === dateStr && b.booking_time === slot.start_time
+      ).length;
+      
+      return {
+        ...slot,
+        available: bookingsForSlot < slot.max_bookings_per_slot,
+        remaining: slot.max_bookings_per_slot - bookingsForSlot
+      };
+    });
+  };
+
+  const isDateAvailable = (date: Date) => {
+    const slots = getSlotsForDate(date);
+    return slots.some(s => s.available);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!selectedDate || !selectedTime || !form.customer_name || !form.customer_phone || !form.purpose) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    const { error } = await supabase.from('bookings').insert({
+      customer_name: form.customer_name,
+      customer_phone: form.customer_phone,
+      customer_email: form.customer_email || null,
+      booking_date: format(selectedDate, 'yyyy-MM-dd'),
+      booking_time: selectedTime,
+      purpose: form.purpose,
+      message: form.message || null
+    });
+
+    setIsSubmitting(false);
+
+    if (error) {
+      toast({
+        title: "Booking Failed",
+        description: error.message,
+        variant: "destructive"
+      });
+    } else {
+      setIsSuccess(true);
+      toast({
+        title: "Booking Confirmed!",
+        description: "We'll contact you shortly to confirm your appointment.",
+      });
+    }
+  };
+
+  if (isSuccess) {
+    return (
+      <>
+        <Helmet>
+          <title>Booking Confirmed | AARTI ENTERPRISE</title>
+        </Helmet>
+        <Header />
+        <main className="min-h-screen bg-gradient-dark py-12">
+          <div className="container mx-auto px-4">
+            <Card className="max-w-lg mx-auto bg-charcoal-light/50 backdrop-blur-xl border-charcoal-medium text-center">
+              <CardContent className="py-12">
+                <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <CheckCircle2 className="w-10 h-10 text-white" />
+                </div>
+                <h2 className="text-2xl font-display font-bold text-foreground mb-3">Booking Confirmed!</h2>
+                <p className="text-muted-foreground mb-6">
+                  Thank you, {form.customer_name}! Your appointment has been scheduled for:
+                </p>
+                <div className="bg-charcoal/50 rounded-xl p-4 mb-6">
+                  <p className="text-lg font-semibold text-primary">
+                    {selectedDate && format(selectedDate, 'EEEE, MMMM d, yyyy')}
+                  </p>
+                  <p className="text-muted-foreground">at {selectedTime}</p>
+                </div>
+                <p className="text-sm text-muted-foreground mb-6">
+                  We'll contact you at <span className="text-foreground">{form.customer_phone}</span> to confirm.
+                </p>
+                <div className="flex gap-3 justify-center">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => { setIsSuccess(false); setSelectedDate(null); setSelectedTime(''); setForm({ customer_name: '', customer_phone: '', customer_email: '', purpose: '', message: '' }); }}
+                    className="border-charcoal-medium text-foreground hover:bg-charcoal-medium"
+                  >
+                    Book Another
+                  </Button>
+                  <Button onClick={() => window.location.href = '/'} className="btn-modern">
+                    Go to Home
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+        <Footer />
+        <WhatsAppButton />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Helmet>
+        <title>Book an Appointment | AARTI ENTERPRISE - SS & Aluminium Products</title>
+        <meta name="description" content="Schedule a consultation with AARTI ENTERPRISE for stainless steel and aluminium products. Visit our showroom in Vadodara, Gujarat." />
+      </Helmet>
+      
+      <Header />
+      
+      <main className="min-h-screen bg-gradient-dark">
+        {/* Hero Section */}
+        <section className="relative py-16 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
+          <div className="container mx-auto px-4 relative">
+            <div className="text-center max-w-2xl mx-auto">
+              <Badge className="bg-primary/20 text-primary border-primary/30 mb-4">
+                <Sparkles className="w-3 h-3 mr-1" />
+                Free Consultation
+              </Badge>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground mb-4">
+                Book an Appointment
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                Schedule a visit to our showroom or request a consultation for your stainless steel & aluminium needs.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Booking Form */}
+        <section className="py-12 -mt-8">
+          <div className="container mx-auto px-4">
+            <div className="grid lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+              {/* Left - Info */}
+              <div className="lg:col-span-1 space-y-6">
+                <Card className="bg-charcoal-light/50 backdrop-blur-xl border-charcoal-medium">
+                  <CardHeader>
+                    <CardTitle className="text-foreground flex items-center gap-2">
+                      <MapPin className="w-5 h-5 text-primary" />
+                      Visit Our Showroom
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-muted-foreground text-sm">
+                      Near Vasna Octori Naka, Vasna, Vadodara, Gujarat 391210
+                    </p>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Clock className="w-4 h-4 text-primary" />
+                      <span>Mon - Sat: 10:00 AM - 6:00 PM</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Phone className="w-4 h-4 text-primary" />
+                      <span>+91 94270 55205</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="bg-gradient-to-br from-primary/20 to-primary/5 border-primary/30">
+                  <CardContent className="py-6">
+                    <CalendarCheck className="w-10 h-10 text-primary mb-3" />
+                    <h3 className="font-semibold text-foreground mb-2">Why Book Online?</h3>
+                    <ul className="text-sm text-muted-foreground space-y-2">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                        Guaranteed time slot
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                        Personalized attention
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                        Expert consultation
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                        Priority service
+                      </li>
+                    </ul>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Right - Form */}
+              <Card className="lg:col-span-2 bg-charcoal-light/50 backdrop-blur-xl border-charcoal-medium">
+                <CardHeader>
+                  <CardTitle className="text-foreground">Schedule Your Visit</CardTitle>
+                  <CardDescription>Select a date and time that works for you</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {isLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      {/* Date Selection */}
+                      <div className="space-y-3">
+                        <Label className="text-foreground flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-primary" />
+                          Select Date *
+                        </Label>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-7 gap-2">
+                          {dateOptions.map((date) => {
+                            const available = isDateAvailable(date);
+                            const isSelected = selectedDate && isSameDay(date, selectedDate);
+                            
+                            return (
+                              <button
+                                key={date.toISOString()}
+                                type="button"
+                                disabled={!available}
+                                onClick={() => { setSelectedDate(date); setSelectedTime(''); }}
+                                className={`p-3 rounded-xl text-center transition-all ${
+                                  isSelected
+                                    ? 'bg-primary text-primary-foreground shadow-lg scale-105'
+                                    : available
+                                    ? 'bg-charcoal hover:bg-charcoal-medium text-foreground border border-charcoal-medium'
+                                    : 'bg-charcoal/50 text-muted-foreground/50 cursor-not-allowed'
+                                }`}
+                              >
+                                <p className="text-xs font-medium">{format(date, 'EEE')}</p>
+                                <p className="text-lg font-bold">{format(date, 'd')}</p>
+                                <p className="text-xs opacity-70">{format(date, 'MMM')}</p>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Time Selection */}
+                      {selectedDate && (
+                        <div className="space-y-3 animate-in fade-in slide-in-from-top-2">
+                          <Label className="text-foreground flex items-center gap-2">
+                            <Clock className="w-4 h-4 text-primary" />
+                            Select Time *
+                          </Label>
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            {getSlotsForDate(selectedDate).map((slot) => (
+                              <button
+                                key={slot.id}
+                                type="button"
+                                disabled={!slot.available}
+                                onClick={() => setSelectedTime(slot.start_time)}
+                                className={`p-3 rounded-xl text-center transition-all ${
+                                  selectedTime === slot.start_time
+                                    ? 'bg-primary text-primary-foreground shadow-lg'
+                                    : slot.available
+                                    ? 'bg-charcoal hover:bg-charcoal-medium text-foreground border border-charcoal-medium'
+                                    : 'bg-charcoal/50 text-muted-foreground/50 cursor-not-allowed line-through'
+                                }`}
+                              >
+                                <p className="font-medium">{slot.start_time} - {slot.end_time}</p>
+                                {slot.available && (
+                                  <p className="text-xs opacity-70">{slot.remaining} slot{slot.remaining > 1 ? 's' : ''} left</p>
+                                )}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Purpose Selection */}
+                      <div className="space-y-3">
+                        <Label className="text-foreground">Purpose of Visit *</Label>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                          {purposes.map((purpose) => (
+                            <button
+                              key={purpose}
+                              type="button"
+                              onClick={() => setForm({ ...form, purpose })}
+                              className={`p-3 rounded-xl text-sm text-center transition-all ${
+                                form.purpose === purpose
+                                  ? 'bg-primary text-primary-foreground shadow-lg'
+                                  : 'bg-charcoal hover:bg-charcoal-medium text-foreground border border-charcoal-medium'
+                              }`}
+                            >
+                              {purpose}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Contact Details */}
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-foreground flex items-center gap-2">
+                            <User className="w-4 h-4 text-primary" />
+                            Your Name *
+                          </Label>
+                          <Input
+                            value={form.customer_name}
+                            onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
+                            placeholder="Enter your full name"
+                            className="bg-charcoal border-charcoal-medium text-foreground"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-foreground flex items-center gap-2">
+                            <Phone className="w-4 h-4 text-primary" />
+                            Phone Number *
+                          </Label>
+                          <Input
+                            type="tel"
+                            value={form.customer_phone}
+                            onChange={(e) => setForm({ ...form, customer_phone: e.target.value })}
+                            placeholder="+91 98765 43210"
+                            className="bg-charcoal border-charcoal-medium text-foreground"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-foreground flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-primary" />
+                          Email (Optional)
+                        </Label>
+                        <Input
+                          type="email"
+                          value={form.customer_email}
+                          onChange={(e) => setForm({ ...form, customer_email: e.target.value })}
+                          placeholder="your@email.com"
+                          className="bg-charcoal border-charcoal-medium text-foreground"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-foreground flex items-center gap-2">
+                          <MessageSquare className="w-4 h-4 text-primary" />
+                          Additional Message
+                        </Label>
+                        <Textarea
+                          value={form.message}
+                          onChange={(e) => setForm({ ...form, message: e.target.value })}
+                          placeholder="Tell us more about what you're looking for..."
+                          className="bg-charcoal border-charcoal-medium text-foreground"
+                          rows={3}
+                        />
+                      </div>
+
+                      <Button 
+                        type="submit" 
+                        className="w-full btn-modern h-12 text-base"
+                        disabled={isSubmitting || !selectedDate || !selectedTime || !form.customer_name || !form.customer_phone || !form.purpose}
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                            Booking...
+                          </>
+                        ) : (
+                          <>
+                            <CalendarCheck className="w-5 h-5 mr-2" />
+                            Confirm Booking
+                          </>
+                        )}
+                      </Button>
+                    </form>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </section>
+      </main>
+      
+      <Footer />
+      <WhatsAppButton />
+    </>
+  );
+};
+
+export default Booking;
