@@ -15,6 +15,7 @@ interface VideoItem {
   description: string;
   duration: string;
   category: 'installation' | 'testimonial';
+  youtubeId: string;
 }
 
 const videos: VideoItem[] = [
@@ -24,7 +25,8 @@ const videos: VideoItem[] = [
     title: 'Luxury Hotel Glass Railing Installation',
     description: 'Complete glass railing installation at a 5-star hotel in Vadodara',
     duration: '4:32',
-    category: 'installation'
+    category: 'installation',
+    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
   },
   {
     id: '2',
@@ -32,7 +34,8 @@ const videos: VideoItem[] = [
     title: 'Spiral Staircase SS Railing',
     description: 'Custom spiral staircase railing installation in modern villa',
     duration: '3:45',
-    category: 'installation'
+    category: 'installation',
+    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
   },
   {
     id: '3',
@@ -40,7 +43,8 @@ const videos: VideoItem[] = [
     title: 'PVD Elevator Panel Installation',
     description: 'Rose gold PVD coated SS panels for commercial elevator',
     duration: '5:18',
-    category: 'installation'
+    category: 'installation',
+    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
   },
   {
     id: '4',
@@ -48,7 +52,8 @@ const videos: VideoItem[] = [
     title: 'Mr. Rajesh Patel - Builder',
     description: '"AARTI ENTERPRISE has been our trusted supplier for 8+ years. Quality and service is unmatched."',
     duration: '2:15',
-    category: 'testimonial'
+    category: 'testimonial',
+    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
   },
   {
     id: '5',
@@ -56,7 +61,8 @@ const videos: VideoItem[] = [
     title: 'Ar. Priya Sharma - Architect',
     description: '"Their designer sheets and custom solutions have elevated our projects significantly."',
     duration: '2:48',
-    category: 'testimonial'
+    category: 'testimonial',
+    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
   },
   {
     id: '6',
@@ -64,7 +70,8 @@ const videos: VideoItem[] = [
     title: 'Mr. Vikram Mehta - Hotel Owner',
     description: '"From glass railings to SS accessories, they delivered everything on time with perfection."',
     duration: '3:02',
-    category: 'testimonial'
+    category: 'testimonial',
+    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
   }
 ];
 
@@ -165,37 +172,32 @@ const VideoShowcase = () => {
           ))}
         </div>
 
-        {/* Video Modal */}
+        {/* Video Modal with YouTube Player */}
         {selectedVideo && (
           <div 
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm p-4"
             onClick={() => setSelectedVideo(null)}
           >
             <div 
-              className="relative w-full max-w-4xl bg-card rounded-2xl overflow-hidden shadow-2xl"
+              className="relative w-full max-w-4xl bg-card rounded-2xl overflow-hidden shadow-2xl animate-scale-in"
               onClick={e => e.stopPropagation()}
             >
               <button
                 onClick={() => setSelectedVideo(null)}
-                className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors"
+                className="absolute -top-12 right-0 z-10 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/20 transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
               
-              {/* Video Placeholder */}
+              {/* YouTube Embedded Player */}
               <div className="relative aspect-video bg-black">
-                <img
-                  src={selectedVideo.thumbnail}
-                  alt={selectedVideo.title}
-                  className="w-full h-full object-cover opacity-50"
+                <iframe
+                  src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}?autoplay=1&rel=0&modestbranding=1`}
+                  title={selectedVideo.title}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
                 />
-                <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
-                  <div className="w-20 h-20 rounded-full bg-primary flex items-center justify-center mb-4 animate-pulse">
-                    <Play className="w-10 h-10 ml-1" fill="currentColor" />
-                  </div>
-                  <p className="text-lg font-medium">Video Coming Soon</p>
-                  <p className="text-sm text-white/70 mt-1">Contact us for project video demos</p>
-                </div>
               </div>
 
               {/* Video Info */}
