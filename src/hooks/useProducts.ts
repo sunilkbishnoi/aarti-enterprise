@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { getProductImage } from '@/data/productImages';
 
 export interface DBProduct {
   id: string;
@@ -136,7 +137,7 @@ export function useProducts() {
         priceMultiplier,
         images: product.images && product.images.length > 0 
           ? product.images 
-          : (product.image_url ? [product.image_url] : ['/placeholder.svg']),
+          : [getProductImage(product.slug)],
         description: product.description || '',
         inStock: product.in_stock ?? true,
         featured: product.is_featured ?? false,
