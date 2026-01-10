@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Filter, X, Search, Sparkles, Grid3X3, LayoutGrid, SlidersHorizontal } from 'lucide-react';
+import { X, Search, Sparkles, Grid3X3, LayoutGrid, Loader2 } from 'lucide-react';
 import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -11,13 +11,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { products, categories, grades } from '@/data/products';
+import { useProducts } from '@/hooks/useProducts';
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [showFilters, setShowFilters] = useState(false);
   const [search, setSearch] = useState('');
   const [gridSize, setGridSize] = useState<'small' | 'large'>('large');
+  
+  const { products, categories, grades, isLoading, error } = useProducts();
   
   const selectedCategory = searchParams.get('category') || '';
   const selectedGrade = searchParams.get('grade') || '';
@@ -32,7 +33,7 @@ const Products = () => {
       
       return matchesCategory && matchesGrade && matchesSearch;
     });
-  }, [selectedCategory, selectedGrade, search]);
+  }, [products, selectedCategory, selectedGrade, search]);
 
   const updateFilter = (key: string, value: string) => {
     if (value) {
@@ -205,46 +206,75 @@ const Products = () => {
 
           {/* Products Grid */}
           <div className="container mx-auto px-4 py-12">
-            {/* Results Count */}
-            <div className="flex items-center justify-between mb-8">
-              <p className="text-muted-foreground">
-                Showing <span className="text-foreground font-semibold">{filteredProducts.length}</span> products
-              </p>
-              <div className="text-sm text-muted-foreground">
-                {selectedCategory && (
-                  <span>in <span className="text-primary font-medium">{categoryName}</span></span>
-                )}
-              </div>
-            </div>
-
-            {/* Products Grid */}
-            {filteredProducts.length > 0 ? (
-              <div className={`grid gap-6 ${
-                gridSize === 'large' 
-                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-                  : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
-              }`}>
-                {filteredProducts.map((product, index) => (
-                  <div 
-                    key={product.id} 
-                    className="animate-fade-up" 
-                    style={{ animationDelay: `${Math.min(index * 50, 500)}ms` }}
-                  >
-                    <ProductCard product={product} compact={gridSize === 'small'} />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20">
-                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
-                  <Search className="w-8 h-8 text-muted-foreground" />
+            {/* Loading State */}
+            {isLoading && (
+              <div className="flex items-center justify-center py-20">
+                <div className="text-center">
+                  <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-4" />
+                  <p className="text-muted-foreground">Loading products...</p>
                 </div>
-                <h3 className="text-xl font-semibold mb-2">No products found</h3>
-                <p className="text-muted-foreground mb-6">Try adjusting your search or filter criteria</p>
-                <Button onClick={clearFilters} className="btn-modern">
-                  Clear All Filters
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && !isLoading && (
+              <div className="text-center py-20">
+                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-destructive/10 flex items-center justify-center">
+                  <X className="w-8 h-8 text-destructive" />
+                </div>
+                <h3 className="text-xl font-semibold mb-2">Failed to load products</h3>
+                <p className="text-muted-foreground mb-6">{error}</p>
+                <Button onClick={() => window.location.reload()} className="btn-modern">
+                  Try Again
                 </Button>
               </div>
+            )}
+
+            {/* Products Content */}
+            {!isLoading && !error && (
+              <>
+                {/* Results Count */}
+                <div className="flex items-center justify-between mb-8">
+                  <p className="text-muted-foreground">
+                    Showing <span className="text-foreground font-semibold">{filteredProducts.length}</span> products
+                  </p>
+                  <div className="text-sm text-muted-foreground">
+                    {selectedCategory && (
+                      <span>in <span className="text-primary font-medium">{categoryName}</span></span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Products Grid */}
+                {filteredProducts.length > 0 ? (
+                  <div className={`grid gap-6 ${
+                    gridSize === 'large' 
+                      ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+                      : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
+                  }`}>
+                    {filteredProducts.map((product, index) => (
+                      <div 
+                        key={product.id} 
+                        className="animate-fade-up" 
+                        style={{ animationDelay: `${Math.min(index * 50, 500)}ms` }}
+                      >
+                        <ProductCard product={product} compact={gridSize === 'small'} />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-20">
+                    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
+                      <Search className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">No products found</h3>
+                    <p className="text-muted-foreground mb-6">Try adjusting your search or filter criteria</p>
+                    <Button onClick={clearFilters} className="btn-modern">
+                      Clear All Filters
+                    </Button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </main>

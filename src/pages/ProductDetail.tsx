@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowLeft, MessageCircle, Plus, Minus, ShoppingBag, Check } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Plus, Minus, ShoppingBag, Check, Loader2 } from 'lucide-react';
 import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -11,29 +11,63 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useInquiry } from '@/context/InquiryContext';
 import { useToast } from '@/hooks/use-toast';
-import { getProductById } from '@/data/products';
+import { useProducts } from '@/hooks/useProducts';
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const { getProductById, isLoading, error } = useProducts();
   const product = getProductById(id || '');
   const { addItem } = useInquiry();
   const { toast } = useToast();
 
-  const [selectedGrade, setSelectedGrade] = useState(product?.grades[0] || '');
-  const [selectedSize, setSelectedSize] = useState(product?.sizes[0] || '');
-  const [selectedThickness, setSelectedThickness] = useState(product?.thicknesses[0] || '');
+  const [selectedGrade, setSelectedGrade] = useState('');
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedThickness, setSelectedThickness] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
 
-  if (!product) {
+  // Set defaults once product loads
+  if (product && !selectedGrade && product.grades.length > 0) {
+    setSelectedGrade(product.grades[0]);
+  }
+  if (product && !selectedSize && product.sizes.length > 0) {
+    setSelectedSize(product.sizes[0]);
+  }
+  if (product && !selectedThickness && product.thicknesses.length > 0) {
+    setSelectedThickness(product.thicknesses[0]);
+  }
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
-          <Link to="/products">
-            <Button>Back to Products</Button>
-          </Link>
+      <div className="min-h-screen bg-background">
+        <TopBar />
+        <Header />
+        <div className="flex items-center justify-center py-20">
+          <div className="text-center">
+            <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">Loading product...</p>
+          </div>
         </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!product || error) {
+    return (
+      <div className="min-h-screen bg-background">
+        <TopBar />
+        <Header />
+        <div className="min-h-[60vh] flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Product Not Found</h1>
+            <p className="text-muted-foreground mb-6">The product you're looking for doesn't exist.</p>
+            <Link to="/products">
+              <Button className="btn-modern">Back to Products</Button>
+            </Link>
+          </div>
+        </div>
+        <Footer />
       </div>
     );
   }
@@ -119,61 +153,67 @@ const ProductDetail = () => {
               {/* Configuration */}
               <div className="space-y-6 mb-8">
                 {/* Grade Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Select Grade
-                  </label>
-                  <Select value={selectedGrade} onValueChange={setSelectedGrade}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {product.grades.map((grade) => (
-                        <SelectItem key={grade} value={grade}>
-                          SS {grade}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {product.grades.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Select Grade
+                    </label>
+                    <Select value={selectedGrade} onValueChange={setSelectedGrade}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select grade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {product.grades.map((grade) => (
+                          <SelectItem key={grade} value={grade}>
+                            SS {grade}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 {/* Size Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Select Size
-                  </label>
-                  <Select value={selectedSize} onValueChange={setSelectedSize}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {product.sizes.map((size) => (
-                        <SelectItem key={size} value={size}>
-                          {size}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {product.sizes.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Select Size
+                    </label>
+                    <Select value={selectedSize} onValueChange={setSelectedSize}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select size" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {product.sizes.map((size) => (
+                          <SelectItem key={size} value={size}>
+                            {size}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 {/* Thickness Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Select Thickness
-                  </label>
-                  <Select value={selectedThickness} onValueChange={setSelectedThickness}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {product.thicknesses.map((thickness) => (
-                        <SelectItem key={thickness} value={thickness}>
-                          {thickness}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {product.thicknesses.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Select Thickness
+                    </label>
+                    <Select value={selectedThickness} onValueChange={setSelectedThickness}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select thickness" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {product.thicknesses.map((thickness) => (
+                          <SelectItem key={thickness} value={thickness}>
+                            {thickness}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
 
                 {/* Quantity */}
                 <div>

@@ -4,10 +4,23 @@ import { MessageCircle, Plus, Check, ArrowUpRight, Sparkles } from 'lucide-react
 import { Badge } from '@/components/ui/badge';
 import { useInquiry } from '@/context/InquiryContext';
 import { useToast } from '@/hooks/use-toast';
-import type { Product } from '@/data/products';
+
+// Generic product interface that works with both static and DB data
+export interface ProductCardProduct {
+  id: string;
+  name: string;
+  grades: string[];
+  sizes: string[];
+  thicknesses: string[];
+  basePrice: number;
+  priceMultiplier: { [key: string]: number };
+  images: string[];
+  description: string;
+  inStock: boolean;
+}
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductCardProduct;
   compact?: boolean;
   index?: number;
 }
