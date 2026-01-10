@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
@@ -201,6 +202,7 @@ const Booking = () => {
         <Helmet>
           <title>Booking Confirmed | AARTI ENTERPRISE</title>
         </Helmet>
+        <TopBar />
         <Header />
         <main className="min-h-screen bg-background py-12">
           <div className="container mx-auto px-4">
@@ -283,6 +285,7 @@ const Booking = () => {
         <meta name="description" content="Schedule a consultation with AARTI ENTERPRISE for stainless steel and aluminium products. Visit our showroom in Vadodara, Gujarat." />
       </Helmet>
       
+      <TopBar />
       <Header />
       
       <main className="min-h-screen bg-background">

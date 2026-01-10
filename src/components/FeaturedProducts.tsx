@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, TrendingUp, Sparkles, Crown } from 'lucide-react';
+import { ArrowRight, TrendingUp, Sparkles, Crown, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductCard from './ProductCard';
-import { getFeaturedProducts } from '@/data/products';
+import { useProducts } from '@/hooks/useProducts';
 
 const FeaturedProducts = () => {
-  const featuredProducts = getFeaturedProducts().slice(0, 8);
+  const { products, isLoading } = useProducts();
+  const featuredProducts = products.filter(p => p.featured).slice(0, 8);
 
   return (
     <section className="relative py-24 md:py-32 overflow-hidden">
@@ -45,17 +46,27 @@ const FeaturedProducts = () => {
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
-          {featuredProducts.map((product, index) => (
-            <div 
-              key={product.id} 
-              className="animate-fade-up" 
-              style={{ animationDelay: `${150 + index * 75}ms` }}
-            >
-              <ProductCard product={product} index={index} />
-            </div>
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12 mb-16">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : featuredProducts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16">
+            {featuredProducts.map((product, index) => (
+              <div 
+                key={product.id} 
+                className="animate-fade-up" 
+                style={{ animationDelay: `${150 + index * 75}ms` }}
+              >
+                <ProductCard product={product} index={index} />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 mb-16">
+            <p className="text-muted-foreground">No featured products available.</p>
+          </div>
+        )}
 
         {/* Bottom Actions */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 animate-fade-up animation-delay-500">
