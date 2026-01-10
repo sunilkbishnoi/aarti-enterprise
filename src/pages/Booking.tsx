@@ -255,12 +255,12 @@ const Booking = () => {
                   <CardHeader>
                     <CardTitle className="text-foreground flex items-center gap-2">
                       <MapPin className="w-5 h-5 text-primary" />
-                      Visit Our Showroom
+                      Visit Our Shop
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <p className="text-muted-foreground text-sm">
-                      Near Vasna Octori Naka, Vasna, Vadodara, Gujarat 391210
+                      Shop No.7, Yamuna Mill Complex, Pratapnagar - Dabhoi Road, Vadodara - 390004
                     </p>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <Clock className="w-4 h-4 text-primary" />
