@@ -153,22 +153,46 @@ const Booking = () => {
       message: form.message || null
     }).select('booking_id').single();
 
-    setIsSubmitting(false);
-
     if (error) {
+      setIsSubmitting(false);
       toast({
         title: "Booking Failed",
         description: error.message,
         variant: "destructive"
       });
-    } else {
-      setBookingId(data?.booking_id || null);
-      setIsSuccess(true);
-      toast({
-        title: "Booking Confirmed!",
-        description: `Booking ID: ${data?.booking_id}. We'll contact you shortly.`,
-      });
+      return;
     }
+
+    // Send email notification
+    try {
+      const emailPayload = {
+        booking_id: data?.booking_id || 'N/A',
+        customer_name: form.customer_name,
+        customer_phone: form.customer_phone,
+        customer_email: form.customer_email || undefined,
+        booking_date: format(selectedDate, 'EEEE, MMMM d, yyyy'),
+        booking_time: selectedTime,
+        purpose: form.purpose,
+        message: form.message || undefined
+      };
+
+      await supabase.functions.invoke('send-booking-email', {
+        body: emailPayload
+      });
+      
+      console.log('Booking email sent successfully');
+    } catch (emailError) {
+      console.error('Failed to send email notification:', emailError);
+      // Don't fail the booking if email fails
+    }
+
+    setIsSubmitting(false);
+    setBookingId(data?.booking_id || null);
+    setIsSuccess(true);
+    toast({
+      title: "Booking Confirmed!",
+      description: `Booking ID: ${data?.booking_id}. We'll contact you shortly.`,
+    });
   };
 
   if (isSuccess) {
