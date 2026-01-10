@@ -9,7 +9,7 @@ import BackToTop from '@/components/BackToTop';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { supabase } from '@/integrations/supabase/client';
 
-// Fallback images for when DB image paths don't work
+// Gallery images - Professional installation photos (regenerated 2026-01-10)
 import galleryGlassRailing from '@/assets/gallery-glass-railing.jpg';
 import gallerySsBaluster from '@/assets/gallery-ss-baluster.jpg';
 import galleryGoldPvd from '@/assets/gallery-gold-pvd.jpg';
@@ -20,6 +20,7 @@ import galleryGlassPartition from '@/assets/gallery-glass-partition.jpg';
 import galleryBlackMirror from '@/assets/gallery-black-mirror.jpg';
 import galleryBalconyGlass from '@/assets/gallery-balcony-glass.jpg';
 
+// Map database image_url paths to imported assets
 const imageMap: Record<string, string> = {
   '/src/assets/gallery-glass-railing.jpg': galleryGlassRailing,
   '/src/assets/gallery-ss-baluster.jpg': gallerySsBaluster,
