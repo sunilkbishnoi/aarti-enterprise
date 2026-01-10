@@ -19,10 +19,19 @@ const AdminLogin = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    if (!loading && user && isAdmin) {
-      navigate('/admin');
+    if (!loading && user) {
+      if (isAdmin) {
+        navigate('/admin');
+      } else {
+        // User exists but not admin - show message
+        toast({
+          title: "Access Denied",
+          description: "This account does not have admin privileges.",
+          variant: "destructive",
+        });
+      }
     }
-  }, [user, isAdmin, loading, navigate]);
+  }, [user, isAdmin, loading, navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,10 +70,26 @@ const AdminLogin = () => {
       
       toast({
         title: "Account Created",
-        description: "Please sign in with your credentials.",
+        description: "Now signing you in automatically...",
       });
-      setIsSignUp(false);
-      setIsLoading(false);
+      
+      // Auto sign-in after signup
+      const signInResult = await signIn(email, password);
+      if (signInResult.error) {
+        toast({
+          title: "Auto Sign-In Failed", 
+          description: "Please sign in manually.",
+          variant: "destructive",
+        });
+        setIsSignUp(false);
+        setIsLoading(false);
+        return;
+      }
+      
+      // Wait for admin status check
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     } else {
       const { error } = await signIn(email, password);
       
@@ -80,13 +105,11 @@ const AdminLogin = () => {
       
       toast({
         title: "Login Successful",
-        description: "Redirecting to admin panel...",
+        description: "Checking admin access...",
       });
       
-      // Small delay to allow isAdmin check
-      setTimeout(() => {
-        navigate('/admin');
-      }, 500);
+      // Wait for isAdmin check to complete before redirect
+      setIsLoading(false);
     }
   };
 
