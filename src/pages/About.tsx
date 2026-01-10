@@ -1,5 +1,6 @@
 import { Helmet } from 'react-helmet-async';
-import { CheckCircle, Users, Award, MapPin, Target, Eye } from 'lucide-react';
+import { CheckCircle, Users, Target, Eye } from 'lucide-react';
+import teamKishanlal from '@/assets/team-kishanlal.jpg';
 import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -168,9 +169,11 @@ const About = () => {
               <h2 className="font-display text-3xl font-bold text-center mb-12">Meet Our Team</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-2xl mx-auto">
                 <div className="bg-card rounded-xl border border-border p-6 text-center animate-fade-up">
-                  <div className="w-24 h-24 rounded-full bg-gradient-gold mx-auto mb-4 flex items-center justify-center">
-                    <Users className="w-12 h-12 text-primary-foreground" />
-                  </div>
+                  <img 
+                    src={teamKishanlal} 
+                    alt="Kishanlal Bishnoi - Founder & Director" 
+                    className="w-24 h-24 rounded-full mx-auto mb-4 object-cover object-top border-2 border-primary/20"
+                  />
                   <h3 className="font-display text-xl font-bold mb-1">Kishanlal Bishnoi</h3>
                   <p className="text-muted-foreground mb-4">Founder & Director</p>
                   <a href="tel:+919427055205" className="text-primary hover:underline">
