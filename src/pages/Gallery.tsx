@@ -20,17 +20,24 @@ import galleryGlassPartition from '@/assets/gallery-glass-partition.jpg';
 import galleryBlackMirror from '@/assets/gallery-black-mirror.jpg';
 import galleryBalconyGlass from '@/assets/gallery-balcony-glass.jpg';
 
-// Map database image_url paths to imported assets
-const imageMap: Record<string, string> = {
-  '/src/assets/gallery-glass-railing.jpg': galleryGlassRailing,
-  '/src/assets/gallery-ss-baluster.jpg': gallerySsBaluster,
-  '/src/assets/gallery-gold-pvd.jpg': galleryGoldPvd,
-  '/src/assets/gallery-spiral-railing.jpg': gallerySpiralRailing,
-  '/src/assets/gallery-aluminium-window.jpg': galleryAluminiumWindow,
-  '/src/assets/gallery-rosegold-elevator.jpg': galleryRosegoldElevator,
-  '/src/assets/gallery-glass-partition.jpg': galleryGlassPartition,
-  '/src/assets/gallery-black-mirror.jpg': galleryBlackMirror,
-  '/src/assets/gallery-balcony-glass.jpg': galleryBalconyGlass,
+// Map gallery image filenames to imported assets
+const galleryImagesByFilename: Record<string, string> = {
+  'gallery-glass-railing.jpg': galleryGlassRailing,
+  'gallery-ss-baluster.jpg': gallerySsBaluster,
+  'gallery-gold-pvd.jpg': galleryGoldPvd,
+  'gallery-spiral-railing.jpg': gallerySpiralRailing,
+  'gallery-aluminium-window.jpg': galleryAluminiumWindow,
+  'gallery-rosegold-elevator.jpg': galleryRosegoldElevator,
+  'gallery-glass-partition.jpg': galleryGlassPartition,
+  'gallery-black-mirror.jpg': galleryBlackMirror,
+  'gallery-balcony-glass.jpg': galleryBalconyGlass,
+};
+
+// Helper to get image from DB url
+const getGalleryImage = (imageUrl: string): string => {
+  // Extract filename from path
+  const filename = imageUrl.split('/').pop() || '';
+  return galleryImagesByFilename[filename] || galleryGlassRailing;
 };
 
 interface GalleryItem {
@@ -83,7 +90,7 @@ const Gallery = () => {
     : galleryItems.filter(item => item.category === selectedCategory);
 
   const getImageSrc = (imageUrl: string) => {
-    return imageMap[imageUrl] || imageUrl;
+    return getGalleryImage(imageUrl);
   };
 
   return (
