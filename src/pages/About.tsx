@@ -4,6 +4,8 @@ import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import BackToTop from '@/components/BackToTop';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 const About = () => {
   const achievements = [
@@ -25,8 +27,24 @@ const About = () => {
   return (
     <>
       <Helmet>
-        <title>About Us - AARTI ENTERPRISE | 10+ Years in SS Business</title>
+        <title>About Us - AARTI ENTERPRISE | 10+ Years in SS Business Vadodara</title>
         <meta name="description" content="AARTI ENTERPRISE - Vadodara's trusted family business for premium stainless steel and aluminium products since 10+ years." />
+        <link rel="canonical" href="https://aartienterprise.com/about" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "AboutPage",
+            "name": "About AARTI ENTERPRISE",
+            "description": "Learn about Vadodara's trusted stainless steel and aluminium supplier",
+            "mainEntity": {
+              "@type": "LocalBusiness",
+              "name": "AARTI ENTERPRISE",
+              "foundingDate": "2014",
+              "numberOfEmployees": "10-20",
+              "areaServed": "Gujarat, India"
+            }
+          })}
+        </script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -37,6 +55,7 @@ const About = () => {
           {/* Hero */}
           <section className="bg-charcoal py-20">
             <div className="container mx-auto px-4">
+              <Breadcrumbs />
               <div className="max-w-3xl">
                 <p className="text-primary font-medium mb-4">ABOUT US</p>
                 <h1 className="font-display text-4xl md:text-5xl font-bold text-secondary mb-6">
@@ -176,6 +195,7 @@ const About = () => {
 
         <Footer />
         <WhatsAppButton />
+        <BackToTop />
       </div>
     </>
   );
