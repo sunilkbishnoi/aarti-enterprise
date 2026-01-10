@@ -8,8 +8,9 @@ const locations = [
     phone: '+91 94270 55205',
     contact: 'Kishanlal Bishnoi',
     hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
-    mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.169!2d73.1234!3d22.2934!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5a6d8d0c3d5%3A0x8f0f0f0f0f0f0f0f!2sK.P.%20Land%20Mark!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin',
-    directionsUrl: 'https://maps.app.goo.gl/ZTFu6y63RL9ujm6z6',
+    mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1845.5!2d73.13277077821304!3d22.29067417452709!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDE3JzI2LjQiTiA3M8KwMDcnNTguMCJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin',
+    coordinates: { lat: 22.29067417452709, lng: 73.13277077821304 },
+    directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=22.29067417452709,73.13277077821304',
   },
   {
     type: 'Shop',
@@ -17,8 +18,9 @@ const locations = [
     phone: '+91 98253 55205',
     contact: 'Kapil Bishnoi',
     hours: 'Mon - Sat: 9:00 AM - 7:00 PM',
-    mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.5!2d73.15!3d22.28!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5b0d0d0d0d0%3A0x9f9f9f9f9f9f9f9f!2sYamuna%20Mill%20Complex!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin',
-    directionsUrl: 'https://maps.app.goo.gl/8fR9rexnputjvrVB8',
+    mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1845.5!2d73.21792258468683!3d22.281926183008654!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDE2JzU1LjAiTiA3M8KwMTMnMDQuNSJF!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin',
+    coordinates: { lat: 22.281926183008654, lng: 73.21792258468683 },
+    directionsUrl: 'https://www.google.com/maps/dir/?api=1&destination=22.281926183008654,73.21792258468683',
   },
 ];
 
