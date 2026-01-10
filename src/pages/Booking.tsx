@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import TopBar from '@/components/TopBar';
@@ -12,8 +13,36 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, User, Phone, Mail, MessageSquare, CheckCircle2, Loader2, CalendarCheck, MapPin, Sparkles } from 'lucide-react';
+import { Calendar, Clock, User, Phone, Mail, MessageSquare, CheckCircle2, Loader2, CalendarCheck, MapPin, Sparkles, AlertCircle } from 'lucide-react';
 import { format, addDays, isSameDay } from 'date-fns';
+
+// Validation schema
+const bookingSchema = z.object({
+  customer_name: z.string()
+    .trim()
+    .min(2, 'Name must be at least 2 characters')
+    .max(100, 'Name must be less than 100 characters'),
+  customer_phone: z.string()
+    .trim()
+    .min(10, 'Phone must be at least 10 digits')
+    .max(15, 'Phone must be less than 15 digits')
+    .regex(/^[+]?[\d\s-]+$/, 'Please enter a valid phone number'),
+  customer_email: z.string()
+    .trim()
+    .email('Please enter a valid email')
+    .max(255, 'Email must be less than 255 characters')
+    .optional()
+    .or(z.literal('')),
+  purpose: z.string()
+    .min(1, 'Please select a purpose')
+    .max(200, 'Purpose must be less than 200 characters'),
+  message: z.string()
+    .max(1000, 'Message must be less than 1000 characters')
+    .optional()
+    .or(z.literal('')),
+});
+
+type BookingFormData = z.infer<typeof bookingSchema>;
 
 interface TimeSlot {
   id: string;
@@ -50,6 +79,7 @@ const Booking = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [bookingId, setBookingId] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Partial<Record<keyof BookingFormData, string>>>({});
   
   const [form, setForm] = useState({
     customer_name: '',
@@ -130,13 +160,41 @@ const Booking = () => {
     return slots.some(s => s.available);
   };
 
+  const validateForm = (): boolean => {
+    try {
+      bookingSchema.parse(form);
+      setErrors({});
+      return true;
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const fieldErrors: Partial<Record<keyof BookingFormData, string>> = {};
+        err.errors.forEach((error) => {
+          if (error.path[0]) {
+            fieldErrors[error.path[0] as keyof BookingFormData] = error.message;
+          }
+        });
+        setErrors(fieldErrors);
+      }
+      return false;
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedDate || !selectedTime || !form.customer_name || !form.customer_phone || !form.purpose) {
+    if (!selectedDate || !selectedTime) {
       toast({
         title: "Missing Information",
-        description: "Please fill in all required fields.",
+        description: "Please select a date and time slot.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!validateForm()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the errors in the form.",
         variant: "destructive"
       });
       return;
@@ -144,21 +202,24 @@ const Booking = () => {
 
     setIsSubmitting(true);
     
-    const { data, error } = await supabase.from('bookings').insert({
-      customer_name: form.customer_name,
-      customer_phone: form.customer_phone,
-      customer_email: form.customer_email || null,
+    // Sanitize inputs
+    const sanitizedData = {
+      customer_name: form.customer_name.trim().slice(0, 100),
+      customer_phone: form.customer_phone.replace(/[^\d+\s-]/g, '').slice(0, 15),
+      customer_email: form.customer_email?.trim().slice(0, 255) || null,
       booking_date: format(selectedDate, 'yyyy-MM-dd'),
       booking_time: selectedTime,
-      purpose: form.purpose,
-      message: form.message || null
-    }).select('booking_id').single();
+      purpose: form.purpose.slice(0, 200),
+      message: form.message?.trim().slice(0, 1000) || null
+    };
+
+    const { data, error } = await supabase.from('bookings').insert(sanitizedData).select('booking_id').single();
 
     if (error) {
       setIsSubmitting(false);
       toast({
         title: "Booking Failed",
-        description: error.message,
+        description: "Please check your information and try again.",
         variant: "destructive"
       });
       return;
@@ -448,7 +509,10 @@ const Booking = () => {
                             <button
                               key={purpose}
                               type="button"
-                              onClick={() => setForm({ ...form, purpose })}
+                              onClick={() => {
+                                setForm({ ...form, purpose });
+                                if (errors.purpose) setErrors({ ...errors, purpose: undefined });
+                              }}
                               className={`p-3 rounded-xl text-sm text-center transition-all border ${
                                 form.purpose === purpose
                                   ? 'bg-primary text-primary-foreground shadow-lg border-primary'
@@ -459,6 +523,11 @@ const Booking = () => {
                             </button>
                           ))}
                         </div>
+                        {errors.purpose && (
+                          <p className="text-destructive text-sm flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" /> {errors.purpose}
+                          </p>
+                        )}
                       </div>
 
                       {/* Contact Details */}
@@ -470,11 +539,19 @@ const Booking = () => {
                           </Label>
                           <Input
                             value={form.customer_name}
-                            onChange={(e) => setForm({ ...form, customer_name: e.target.value })}
+                            onChange={(e) => {
+                              setForm({ ...form, customer_name: e.target.value });
+                              if (errors.customer_name) setErrors({ ...errors, customer_name: undefined });
+                            }}
                             placeholder="Enter your full name"
-                            className="bg-background border-input"
-                            required
+                            className={`bg-background border-input ${errors.customer_name ? 'border-destructive' : ''}`}
+                            maxLength={100}
                           />
+                          {errors.customer_name && (
+                            <p className="text-destructive text-sm flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3" /> {errors.customer_name}
+                            </p>
+                          )}
                         </div>
                         <div className="space-y-2">
                           <Label className="text-foreground flex items-center gap-2">
@@ -484,11 +561,19 @@ const Booking = () => {
                           <Input
                             type="tel"
                             value={form.customer_phone}
-                            onChange={(e) => setForm({ ...form, customer_phone: e.target.value })}
+                            onChange={(e) => {
+                              setForm({ ...form, customer_phone: e.target.value });
+                              if (errors.customer_phone) setErrors({ ...errors, customer_phone: undefined });
+                            }}
                             placeholder="+91 98765 43210"
-                            className="bg-background border-input"
-                            required
+                            className={`bg-background border-input ${errors.customer_phone ? 'border-destructive' : ''}`}
+                            maxLength={15}
                           />
+                          {errors.customer_phone && (
+                            <p className="text-destructive text-sm flex items-center gap-1">
+                              <AlertCircle className="w-3 h-3" /> {errors.customer_phone}
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -500,10 +585,19 @@ const Booking = () => {
                         <Input
                           type="email"
                           value={form.customer_email}
-                          onChange={(e) => setForm({ ...form, customer_email: e.target.value })}
+                          onChange={(e) => {
+                            setForm({ ...form, customer_email: e.target.value });
+                            if (errors.customer_email) setErrors({ ...errors, customer_email: undefined });
+                          }}
                           placeholder="your@email.com"
-                          className="bg-background border-input"
+                          className={`bg-background border-input ${errors.customer_email ? 'border-destructive' : ''}`}
+                          maxLength={255}
                         />
+                        {errors.customer_email && (
+                          <p className="text-destructive text-sm flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" /> {errors.customer_email}
+                          </p>
+                        )}
                       </div>
 
                       <div className="space-y-2">
