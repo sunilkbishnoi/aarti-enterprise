@@ -604,10 +604,16 @@ img {
   @apply transition-opacity duration-300;
 }
 
-img[loading] {
+/*
+  NOTE: We previously hid all images that had a `loading` attribute (e.g. loading="lazy"),
+  which caused "white cards" where images never became visible.
+
+  If you want fade-in, opt-in per image with: data-fade="true" + add the `loaded` class onLoad.
+*/
+img[data-fade="true"] {
   @apply opacity-0;
 }
 
-img.loaded {
+img[data-fade="true"].loaded {
   @apply opacity-100;
 }
