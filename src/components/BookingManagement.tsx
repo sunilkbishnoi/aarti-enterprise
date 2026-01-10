@@ -26,10 +26,10 @@ interface Booking {
 }
 
 const statusColors: Record<string, string> = {
-  pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  confirmed: 'bg-green-500/20 text-green-400 border-green-500/30',
-  cancelled: 'bg-red-500/20 text-red-400 border-red-500/30',
-  completed: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
+  pending: 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400 border-yellow-500/30',
+  confirmed: 'bg-green-500/20 text-green-600 dark:text-green-400 border-green-500/30',
+  cancelled: 'bg-red-500/20 text-red-600 dark:text-red-400 border-red-500/30',
+  completed: 'bg-blue-500/20 text-blue-600 dark:text-blue-400 border-blue-500/30',
 };
 
 const BookingManagement = () => {
@@ -119,7 +119,7 @@ const BookingManagement = () => {
     <div className="space-y-6">
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card className="bg-charcoal-light/50 border-charcoal-medium">
+        <Card className="bg-card border-border">
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
@@ -130,36 +130,36 @@ const BookingManagement = () => {
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-charcoal-light/50 border-charcoal-medium">
+        <Card className="bg-card border-border">
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-muted-foreground text-sm">Today</p>
                 <p className="text-2xl font-bold text-foreground">{stats.today}</p>
               </div>
-              <Calendar className="w-8 h-8 text-blue-400/50" />
+              <Calendar className="w-8 h-8 text-blue-500/50" />
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-charcoal-light/50 border-charcoal-medium">
+        <Card className="bg-card border-border">
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-muted-foreground text-sm">Pending</p>
-                <p className="text-2xl font-bold text-yellow-400">{stats.pending}</p>
+                <p className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.pending}</p>
               </div>
-              <AlertCircle className="w-8 h-8 text-yellow-400/50" />
+              <AlertCircle className="w-8 h-8 text-yellow-500/50" />
             </div>
           </CardContent>
         </Card>
-        <Card className="bg-charcoal-light/50 border-charcoal-medium">
+        <Card className="bg-card border-border">
           <CardContent className="py-4">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-muted-foreground text-sm">Confirmed</p>
-                <p className="text-2xl font-bold text-green-400">{stats.confirmed}</p>
+                <p className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.confirmed}</p>
               </div>
-              <CheckCircle className="w-8 h-8 text-green-400/50" />
+              <CheckCircle className="w-8 h-8 text-green-500/50" />
             </div>
           </CardContent>
         </Card>
@@ -170,16 +170,16 @@ const BookingManagement = () => {
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-muted-foreground" />
           <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-40 bg-charcoal border-charcoal-medium text-foreground">
+            <SelectTrigger className="w-40 bg-background border-input">
               <SelectValue placeholder="Filter" />
             </SelectTrigger>
-            <SelectContent className="bg-charcoal border-charcoal-medium">
-              <SelectItem value="all" className="text-foreground">All Bookings</SelectItem>
-              <SelectItem value="upcoming" className="text-foreground">Upcoming</SelectItem>
-              <SelectItem value="pending" className="text-foreground">Pending</SelectItem>
-              <SelectItem value="confirmed" className="text-foreground">Confirmed</SelectItem>
-              <SelectItem value="completed" className="text-foreground">Completed</SelectItem>
-              <SelectItem value="cancelled" className="text-foreground">Cancelled</SelectItem>
+            <SelectContent className="bg-popover border-border">
+              <SelectItem value="all">All Bookings</SelectItem>
+              <SelectItem value="upcoming">Upcoming</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -187,7 +187,6 @@ const BookingManagement = () => {
           variant="outline" 
           size="sm" 
           onClick={fetchBookings}
-          className="border-charcoal-medium text-foreground hover:bg-charcoal-medium"
         >
           <RefreshCw className="w-4 h-4" />
         </Button>
@@ -195,7 +194,7 @@ const BookingManagement = () => {
 
       {/* Bookings List */}
       {filteredBookings.length === 0 ? (
-        <Card className="bg-charcoal-light/50 border-charcoal-medium border-dashed">
+        <Card className="bg-card border-border border-dashed">
           <CardContent className="py-12 text-center">
             <CalendarCheck className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-semibold text-foreground mb-2">No Bookings Found</h3>
@@ -209,7 +208,7 @@ const BookingManagement = () => {
           {filteredBookings.map((booking) => (
             <Card 
               key={booking.id} 
-              className={`bg-charcoal-light/50 border-charcoal-medium hover:border-primary/30 transition-colors ${
+              className={`bg-card border-border hover:border-primary/30 transition-colors ${
                 isToday(parseISO(booking.booking_date)) ? 'ring-2 ring-primary/30' : ''
               }`}
             >
@@ -257,7 +256,7 @@ const BookingManagement = () => {
                     </div>
                     
                     {booking.message && (
-                      <p className="text-sm text-muted-foreground bg-charcoal/50 rounded-lg p-3 italic">
+                      <p className="text-sm text-muted-foreground bg-muted rounded-lg p-3 italic">
                         "{booking.message}"
                       </p>
                     )}
@@ -287,7 +286,7 @@ const BookingManagement = () => {
                           variant="outline"
                           onClick={() => updateStatus(booking.id, 'cancelled')}
                           disabled={updatingId === booking.id}
-                          className="border-red-500/50 text-red-400 hover:bg-red-500/20"
+                          className="border-red-500/50 text-red-600 dark:text-red-400 hover:bg-red-500/10"
                         >
                           <XCircle className="w-4 h-4 mr-1" />
                           Cancel
@@ -313,7 +312,7 @@ const BookingManagement = () => {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Button size="sm" variant="outline" className="border-green-500/50 text-green-400 hover:bg-green-500/20 w-full">
+                      <Button size="sm" variant="outline" className="border-green-500/50 text-green-600 dark:text-green-400 hover:bg-green-500/10 w-full">
                         WhatsApp
                       </Button>
                     </a>
