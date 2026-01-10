@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Phone, Mail, MapPin, Clock, Send, MessageCircle, Loader2 } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, MessageCircle, Loader2, AlertCircle } from 'lucide-react';
+import { z } from 'zod';
 import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -13,6 +14,31 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
+// Validation schema
+const contactSchema = z.object({
+  name: z.string()
+    .trim()
+    .min(2, 'Name must be at least 2 characters')
+    .max(100, 'Name must be less than 100 characters'),
+  phone: z.string()
+    .trim()
+    .min(10, 'Phone number must be at least 10 digits')
+    .max(15, 'Phone number must be less than 15 digits')
+    .regex(/^[+]?[\d\s-]+$/, 'Please enter a valid phone number'),
+  email: z.string()
+    .trim()
+    .email('Please enter a valid email')
+    .max(255, 'Email must be less than 255 characters')
+    .optional()
+    .or(z.literal('')),
+  message: z.string()
+    .trim()
+    .min(10, 'Message must be at least 10 characters')
+    .max(2000, 'Message must be less than 2000 characters'),
+});
+
+type ContactFormData = z.infer<typeof contactSchema>;
+
 const Contact = () => {
   const { toast } = useToast();
   const [formData, setFormData] = useState({
@@ -21,26 +47,64 @@ const Contact = () => {
     email: '',
     message: '',
   });
+  const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const validateForm = (): boolean => {
+    try {
+      contactSchema.parse(formData);
+      setErrors({});
+      return true;
+    } catch (err) {
+      if (err instanceof z.ZodError) {
+        const fieldErrors: Partial<Record<keyof ContactFormData, string>> = {};
+        err.errors.forEach((error) => {
+          if (error.path[0]) {
+            fieldErrors[error.path[0] as keyof ContactFormData] = error.message;
+          }
+        });
+        setErrors(fieldErrors);
+      }
+      return false;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      toast({
+        title: "Validation Error",
+        description: "Please fix the errors in the form.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      // Sanitize inputs
+      const sanitizedData = {
+        name: formData.name.trim().slice(0, 100),
+        phone: formData.phone.replace(/[^\d+\s-]/g, '').slice(0, 15),
+        email: formData.email?.trim().slice(0, 255) || null,
+        message: formData.message.trim().slice(0, 2000),
+      };
+
       // Store inquiry in database
       const { error } = await supabase.from('contact_inquiries').insert({
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email || null,
-        message: formData.message,
+        name: sanitizedData.name,
+        phone: sanitizedData.phone,
+        email: sanitizedData.email,
+        message: sanitizedData.message,
       });
 
       if (error) throw error;
 
-      // Open WhatsApp with the message
+      // Open WhatsApp with the message (properly encoded)
       const whatsappMessage = encodeURIComponent(
-        `New Inquiry from Website:\n\nName: ${formData.name}\nPhone: ${formData.phone}\nEmail: ${formData.email}\n\nMessage: ${formData.message}`
+        `New Inquiry from Website:\n\nName: ${sanitizedData.name}\nPhone: ${sanitizedData.phone}\nEmail: ${sanitizedData.email || 'Not provided'}\n\nMessage: ${sanitizedData.message}`
       );
 
       window.open(`https://wa.me/919427055205?text=${whatsappMessage}`, '_blank');
@@ -51,6 +115,7 @@ const Contact = () => {
       });
 
       setFormData({ name: '', phone: '', email: '', message: '' });
+      setErrors({});
     } catch (err: any) {
       console.error('Error submitting inquiry:', err);
       toast({
@@ -133,22 +198,40 @@ const Contact = () => {
                   <div>
                     <label className="block text-sm font-medium mb-2">Your Name *</label>
                     <Input
-                      required
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, name: e.target.value });
+                        if (errors.name) setErrors({ ...errors, name: undefined });
+                      }}
                       placeholder="Enter your name"
+                      className={errors.name ? 'border-destructive' : ''}
+                      maxLength={100}
                     />
+                    {errors.name && (
+                      <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" /> {errors.name}
+                      </p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium mb-2">Phone Number *</label>
                     <Input
-                      required
                       type="tel"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, phone: e.target.value });
+                        if (errors.phone) setErrors({ ...errors, phone: undefined });
+                      }}
                       placeholder="+91 XXXXX XXXXX"
+                      className={errors.phone ? 'border-destructive' : ''}
+                      maxLength={15}
                     />
+                    {errors.phone && (
+                      <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" /> {errors.phone}
+                      </p>
+                    )}
                   </div>
 
                   <div>
@@ -156,20 +239,46 @@ const Contact = () => {
                     <Input
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) => {
+                        setFormData({ ...formData, email: e.target.value });
+                        if (errors.email) setErrors({ ...errors, email: undefined });
+                      }}
                       placeholder="your@email.com"
+                      className={errors.email ? 'border-destructive' : ''}
+                      maxLength={255}
                     />
+                    {errors.email && (
+                      <p className="text-destructive text-sm mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-3 h-3" /> {errors.email}
+                      </p>
+                    )}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium mb-2">Your Message *</label>
                     <Textarea
-                      required
                       rows={5}
                       value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      placeholder="Tell us about your requirements..."
+                      onChange={(e) => {
+                        setFormData({ ...formData, message: e.target.value });
+                        if (errors.message) setErrors({ ...errors, message: undefined });
+                      }}
+                      placeholder="Tell us about your requirements... (min 10 characters)"
+                      className={errors.message ? 'border-destructive' : ''}
+                      maxLength={2000}
                     />
+                    <div className="flex justify-between mt-1">
+                      {errors.message ? (
+                        <p className="text-destructive text-sm flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" /> {errors.message}
+                        </p>
+                      ) : (
+                        <span />
+                      )}
+                      <span className="text-xs text-muted-foreground">
+                        {formData.message.length}/2000
+                      </span>
+                    </div>
                   </div>
 
                   <Button type="submit" disabled={isSubmitting} className="w-full gap-2">
