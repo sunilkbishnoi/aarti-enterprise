@@ -55,7 +55,7 @@ const Products = () => {
   ].filter(Boolean);
 
   const categoryName = selectedCategory 
-    ? categories.find(c => c.id === selectedCategory)?.name 
+    ? (categories.find(c => c.id === selectedCategory)?.name || 'Products')
     : 'All Products';
 
   return (
