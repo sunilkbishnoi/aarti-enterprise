@@ -6,6 +6,9 @@ import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import BackToTop from '@/components/BackToTop';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ProductImageGallery from '@/components/ProductImageGallery';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -111,22 +114,16 @@ const ProductDetail = () => {
         <Header />
 
         <main className="container mx-auto px-4 py-8">
-          {/* Breadcrumb */}
-          <Link to="/products" className="inline-flex items-center gap-2 text-muted-foreground hover:text-primary mb-8 transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Products
-          </Link>
+          <Breadcrumbs items={[
+            { label: 'Home', path: '/' },
+            { label: 'Products', path: '/products' },
+            { label: product.name }
+          ]} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Product Image */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-4">
+            {/* Product Image Gallery */}
             <div className="space-y-4">
-              <div className="aspect-square rounded-xl bg-muted overflow-hidden">
-                <img
-                  src={product.images[0]}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+              <ProductImageGallery images={product.images} productName={product.name} />
               
               <div className="flex flex-wrap gap-2">
                 {product.grades.map((grade) => (
@@ -293,6 +290,7 @@ const ProductDetail = () => {
 
         <Footer />
         <WhatsAppButton />
+        <BackToTop />
       </div>
     </>
   );

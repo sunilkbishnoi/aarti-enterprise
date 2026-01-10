@@ -1,12 +1,14 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { X, Search, Sparkles, Grid3X3, LayoutGrid, Loader2 } from 'lucide-react';
+import { X, Search, Sparkles, Grid3X3, LayoutGrid } from 'lucide-react';
 import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import BackToTop from '@/components/BackToTop';
 import ProductCard from '@/components/ProductCard';
+import ProductSkeleton from '@/components/ProductSkeleton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -61,8 +63,18 @@ const Products = () => {
   return (
     <>
       <Helmet>
-        <title>{categoryName} - SS & Aluminium Products | AARTI ENTERPRISE Vadodara</title>
+        <title>{`${categoryName} - SS & Aluminium Products | AARTI ENTERPRISE Vadodara`}</title>
         <meta name="description" content="Browse our complete range of stainless steel pipes, sheets, designer panels, glass railings & aluminium sections. Best wholesale prices in Gujarat." />
+        <link rel="canonical" href="https://aartienterprise.com/products" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": `${categoryName} - AARTI ENTERPRISE`,
+            "description": "Browse premium stainless steel and aluminium products",
+            "url": "https://aartienterprise.com/products"
+          })}
+        </script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -206,13 +218,14 @@ const Products = () => {
 
           {/* Products Grid */}
           <div className="container mx-auto px-4 py-12">
-            {/* Loading State */}
+            {/* Loading State with Skeleton */}
             {isLoading && (
-              <div className="flex items-center justify-center py-20">
-                <div className="text-center">
-                  <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-4" />
-                  <p className="text-muted-foreground">Loading products...</p>
-                </div>
+              <div className={`grid gap-6 ${
+                gridSize === 'large' 
+                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+                  : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
+              }`}>
+                <ProductSkeleton count={8} compact={gridSize === 'small'} />
               </div>
             )}
 
@@ -281,6 +294,7 @@ const Products = () => {
 
         <Footer />
         <WhatsAppButton />
+        <BackToTop />
       </div>
     </>
   );

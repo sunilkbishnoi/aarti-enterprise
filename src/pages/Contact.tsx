@@ -1,14 +1,17 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Phone, Mail, MapPin, Clock, Send, MessageCircle } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Send, MessageCircle, Loader2 } from 'lucide-react';
 import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import BackToTop from '@/components/BackToTop';
+import Breadcrumbs from '@/components/Breadcrumbs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const Contact = () => {
   const { toast } = useToast();
@@ -24,22 +27,40 @@ const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      // Store inquiry in database
+      const { error } = await supabase.from('contact_inquiries').insert({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email || null,
+        message: formData.message,
+      });
 
-    const whatsappMessage = encodeURIComponent(
-      `New Inquiry from Website:\n\nName: ${formData.name}\nPhone: ${formData.phone}\nEmail: ${formData.email}\n\nMessage: ${formData.message}`
-    );
+      if (error) throw error;
 
-    window.open(`https://wa.me/919427055205?text=${whatsappMessage}`, '_blank');
+      // Open WhatsApp with the message
+      const whatsappMessage = encodeURIComponent(
+        `New Inquiry from Website:\n\nName: ${formData.name}\nPhone: ${formData.phone}\nEmail: ${formData.email}\n\nMessage: ${formData.message}`
+      );
 
-    toast({
-      title: "Message Sent!",
-      description: "We'll get back to you shortly.",
-    });
+      window.open(`https://wa.me/919427055205?text=${whatsappMessage}`, '_blank');
 
-    setFormData({ name: '', phone: '', email: '', message: '' });
-    setIsSubmitting(false);
+      toast({
+        title: "Message Sent!",
+        description: "Your inquiry has been saved. We'll get back to you shortly.",
+      });
+
+      setFormData({ name: '', phone: '', email: '', message: '' });
+    } catch (err: any) {
+      console.error('Error submitting inquiry:', err);
+      toast({
+        title: "Error",
+        description: "Failed to submit inquiry. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const locations = [
@@ -64,8 +85,23 @@ const Contact = () => {
   return (
     <>
       <Helmet>
-        <title>Contact Us - AARTI ENTERPRISE Vadodara</title>
+        <title>Contact Us - AARTI ENTERPRISE Vadodara | SS & Aluminium Products</title>
         <meta name="description" content="Contact AARTI ENTERPRISE for SS pipes, sheets, railings & aluminium products. Visit our office or shop in Vadodara. Call +91 94270 55205" />
+        <link rel="canonical" href="https://aartienterprise.com/contact" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "name": "Contact AARTI ENTERPRISE",
+            "description": "Contact us for SS and aluminium product inquiries",
+            "mainEntity": {
+              "@type": "LocalBusiness",
+              "name": "AARTI ENTERPRISE",
+              "telephone": ["+91-94270-55205", "+91-98253-55205"],
+              "email": "aartienterprise05@gmail.com"
+            }
+          })}
+        </script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -76,6 +112,7 @@ const Contact = () => {
           {/* Hero */}
           <section className="bg-charcoal py-12">
             <div className="container mx-auto px-4">
+              <Breadcrumbs />
               <h1 className="font-display text-3xl md:text-4xl font-bold text-secondary mb-4">
                 Contact Us
               </h1>
@@ -136,7 +173,12 @@ const Contact = () => {
                   </div>
 
                   <Button type="submit" disabled={isSubmitting} className="w-full gap-2">
-                    {isSubmitting ? 'Sending...' : (
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
                       <>
                         <Send className="w-4 h-4" />
                         Send Message
@@ -272,6 +314,7 @@ const Contact = () => {
 
         <Footer />
         <WhatsAppButton />
+        <BackToTop />
       </div>
     </>
   );

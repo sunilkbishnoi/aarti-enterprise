@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { X } from 'lucide-react';
+import { X, Loader2, ImageOff, Sparkles } from 'lucide-react';
 import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
+import BackToTop from '@/components/BackToTop';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import { supabase } from '@/integrations/supabase/client';
 
+// Fallback images for when DB image paths don't work
 import galleryGlassRailing from '@/assets/gallery-glass-railing.jpg';
 import gallerySsBaluster from '@/assets/gallery-ss-baluster.jpg';
 import galleryGoldPvd from '@/assets/gallery-gold-pvd.jpg';
@@ -16,71 +20,26 @@ import galleryGlassPartition from '@/assets/gallery-glass-partition.jpg';
 import galleryBlackMirror from '@/assets/gallery-black-mirror.jpg';
 import galleryBalconyGlass from '@/assets/gallery-balcony-glass.jpg';
 
-const galleryItems = [
-  {
-    id: 1,
-    category: 'railing',
-    title: 'Modern Glass Railing',
-    description: 'Elegant glass railing installation in luxury apartment',
-    image: galleryGlassRailing,
-  },
-  {
-    id: 2,
-    category: 'railing',
-    title: 'SS Baluster Railing',
-    description: 'Classic stainless steel baluster design',
-    image: gallerySsBaluster,
-  },
-  {
-    id: 3,
-    category: 'designer',
-    title: 'Gold PVD Panel Wall',
-    description: 'Designer gold PVD sheets in hotel lobby',
-    image: galleryGoldPvd,
-  },
-  {
-    id: 4,
-    category: 'railing',
-    title: 'Spiral Staircase Railing',
-    description: 'Custom SS railing for spiral staircase',
-    image: gallerySpiralRailing,
-  },
-  {
-    id: 5,
-    category: 'aluminium',
-    title: 'Aluminium Window Installation',
-    description: 'Modern aluminium sliding windows',
-    image: galleryAluminiumWindow,
-  },
-  {
-    id: 6,
-    category: 'designer',
-    title: 'Rose Gold Elevator Panels',
-    description: 'Elegant rose gold PVD elevator interiors',
-    image: galleryRosegoldElevator,
-  },
-  {
-    id: 7,
-    category: 'railing',
-    title: 'Office Glass Partition',
-    description: 'Frameless glass partition with SS fittings',
-    image: galleryGlassPartition,
-  },
-  {
-    id: 8,
-    category: 'designer',
-    title: 'Black Mirror Sheet Wall',
-    description: 'Stunning black mirror finish feature wall',
-    image: galleryBlackMirror,
-  },
-  {
-    id: 9,
-    category: 'railing',
-    title: 'Balcony Glass Railing',
-    description: 'Frameless glass railing with U-channel',
-    image: galleryBalconyGlass,
-  },
-];
+const imageMap: Record<string, string> = {
+  '/src/assets/gallery-glass-railing.jpg': galleryGlassRailing,
+  '/src/assets/gallery-ss-baluster.jpg': gallerySsBaluster,
+  '/src/assets/gallery-gold-pvd.jpg': galleryGoldPvd,
+  '/src/assets/gallery-spiral-railing.jpg': gallerySpiralRailing,
+  '/src/assets/gallery-aluminium-window.jpg': galleryAluminiumWindow,
+  '/src/assets/gallery-rosegold-elevator.jpg': galleryRosegoldElevator,
+  '/src/assets/gallery-glass-partition.jpg': galleryGlassPartition,
+  '/src/assets/gallery-black-mirror.jpg': galleryBlackMirror,
+  '/src/assets/gallery-balcony-glass.jpg': galleryBalconyGlass,
+};
+
+interface GalleryItem {
+  id: string;
+  title: string;
+  description: string | null;
+  image_url: string;
+  category: string;
+  display_order: number | null;
+}
 
 const categories = [
   { id: 'all', name: 'All Projects' },
@@ -91,17 +50,56 @@ const categories = [
 
 const Gallery = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [lightboxImage, setLightboxImage] = useState<typeof galleryItems[0] | null>(null);
+  const [lightboxImage, setLightboxImage] = useState<GalleryItem | null>(null);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchGalleryItems = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('gallery_items')
+          .select('*')
+          .eq('is_active', true)
+          .order('display_order', { ascending: true });
+
+        if (error) throw error;
+        setGalleryItems(data || []);
+      } catch (err: any) {
+        console.error('Error fetching gallery:', err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchGalleryItems();
+  }, []);
 
   const filteredItems = selectedCategory === 'all'
     ? galleryItems
     : galleryItems.filter(item => item.category === selectedCategory);
 
+  const getImageSrc = (imageUrl: string) => {
+    return imageMap[imageUrl] || imageUrl;
+  };
+
   return (
     <>
       <Helmet>
-        <title>Project Gallery - AARTI ENTERPRISE</title>
+        <title>Project Gallery - AARTI ENTERPRISE | SS & Glass Railing Works</title>
         <meta name="description" content="View our completed projects - SS railings, glass railings, designer sheets, and aluminium installations across Vadodara and Gujarat." />
+        <link rel="canonical" href="https://aartienterprise.com/gallery" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ImageGallery",
+            "name": "AARTI ENTERPRISE Project Gallery",
+            "description": "Portfolio of completed stainless steel railing, glass railing, and designer sheet installations",
+            "url": "https://aartienterprise.com/gallery"
+          })}
+        </script>
       </Helmet>
 
       <div className="min-h-screen bg-background">
@@ -112,6 +110,13 @@ const Gallery = () => {
           {/* Hero */}
           <section className="bg-charcoal py-12">
             <div className="container mx-auto px-4">
+              <Breadcrumbs />
+              <div className="flex items-center gap-3 mb-4">
+                <span className="badge-premium">
+                  <Sparkles className="w-3.5 h-3.5 mr-2" />
+                  Our Work
+                </span>
+              </div>
               <h1 className="font-display text-3xl md:text-4xl font-bold text-secondary mb-4">
                 Project Gallery
               </h1>
@@ -146,30 +151,65 @@ const Gallery = () => {
           {/* Gallery Grid */}
           <section className="py-12">
             <div className="container mx-auto px-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredItems.map((item, index) => (
-                  <div
-                    key={item.id}
-                    onClick={() => setLightboxImage(item)}
-                    className="group cursor-pointer overflow-hidden rounded-xl bg-card border border-border animate-fade-up"
-                    style={{ animationDelay: `${index * 100}ms` }}
-                  >
-                    <div className="aspect-[4/3] overflow-hidden">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      />
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
-                        {item.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-                    </div>
+              {isLoading ? (
+                <div className="flex items-center justify-center py-20">
+                  <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-20">
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-destructive/10 flex items-center justify-center">
+                    <X className="w-8 h-8 text-destructive" />
                   </div>
-                ))}
-              </div>
+                  <h3 className="text-xl font-semibold mb-2">Failed to load gallery</h3>
+                  <p className="text-muted-foreground">{error}</p>
+                </div>
+              ) : filteredItems.length === 0 ? (
+                <div className="text-center py-20">
+                  <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
+                    <ImageOff className="w-8 h-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-2">No projects found</h3>
+                  <p className="text-muted-foreground">
+                    {selectedCategory === 'all' 
+                      ? 'No gallery items available yet.' 
+                      : `No projects in the "${categories.find(c => c.id === selectedCategory)?.name}" category.`}
+                  </p>
+                  {selectedCategory !== 'all' && (
+                    <button
+                      onClick={() => setSelectedCategory('all')}
+                      className="mt-4 text-primary hover:underline"
+                    >
+                      View all projects
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredItems.map((item, index) => (
+                    <div
+                      key={item.id}
+                      onClick={() => setLightboxImage(item)}
+                      className="group cursor-pointer overflow-hidden rounded-xl bg-card border border-border animate-fade-up"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <div className="aspect-[4/3] overflow-hidden">
+                        <img
+                          src={getImageSrc(item.image_url)}
+                          alt={item.title}
+                          loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-medium text-foreground group-hover:text-primary transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
         </main>
@@ -188,7 +228,7 @@ const Gallery = () => {
             </button>
             <div className="max-w-4xl w-full animate-scale-in" onClick={e => e.stopPropagation()}>
               <img
-                src={lightboxImage.image}
+                src={getImageSrc(lightboxImage.image_url)}
                 alt={lightboxImage.title}
                 className="w-full h-auto max-h-[70vh] object-contain rounded-lg"
               />
@@ -204,6 +244,7 @@ const Gallery = () => {
 
         <Footer />
         <WhatsAppButton />
+        <BackToTop />
       </div>
     </>
   );
