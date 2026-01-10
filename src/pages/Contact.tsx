@@ -48,7 +48,7 @@ const Contact = () => {
       address: '3rd Floor, 316, K.P. Land Mark, Near Bright School, Vasna Bhaili Road, Vadodara, Gujarat - 391410',
       phone: '+91 94270 55205',
       contact: 'Kishanlal Bishnoi',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.5!2d73.12!3d22.29!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDE3JzI0LjAiTiA3M8KwMDcnMTIuMCJF!5e0!3m2!1sen!2sin!4v1234567890',
+      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d73.13277077821304!3d22.29067417452709!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDE3JzI2LjQiTiA3M8KwMDcnNTguMCJF!5e0!3m2!1sen!2sin!4v1234567890',
       directionsUrl: 'https://maps.app.goo.gl/ZTFu6y63RL9ujm6z6',
     },
     {
@@ -56,7 +56,7 @@ const Contact = () => {
       address: 'Shop No.7, Yamuna Mill Complex, Pratapnagar - Dabhoi Road, Vadodara, Gujarat - 390004',
       phone: '+91 98253 55205',
       contact: 'Kapil Bishnoi',
-      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3691.169!2d73.1392!3d22.2965!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395fc5a69753d8ef%3A0x4b4b4b4b4b4b4b4b!2sYamuna%20Mill%20Complex!5e0!3m2!1sen!2sin!4v1234567890',
+      mapUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1000!2d73.21792258468683!3d22.281926183008654!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjLCsDE2JzU1LjAiTiA3M8KwMTMnMDQuNSJF!5e0!3m2!1sen!2sin!4v1234567890',
       directionsUrl: 'https://maps.app.goo.gl/8fR9rexnputjvrVB8',
     },
   ];
