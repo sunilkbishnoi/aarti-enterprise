@@ -339,6 +339,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_booking_counts: {
+        Args: { start_date: string }
+        Returns: {
+          booking_count: number
+          booking_date: string
+          booking_time: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

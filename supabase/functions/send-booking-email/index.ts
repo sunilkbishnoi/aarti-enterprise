@@ -1,11 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 interface BookingEmailRequest {
@@ -17,6 +18,15 @@ interface BookingEmailRequest {
   booking_time: string;
   purpose: string;
   message?: string;
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 async function sendEmail(to: string[], subject: string, html: string) {
@@ -43,7 +53,6 @@ async function sendEmail(to: string[], subject: string, html: string) {
 }
 
 const handler = async (req: Request): Promise<Response> => {
-  // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
@@ -51,7 +60,52 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const bookingData: BookingEmailRequest = await req.json();
 
-    // Admin email HTML
+    // Input validation
+    if (!bookingData.booking_id || typeof bookingData.booking_id !== 'string' || bookingData.booking_id.length > 20) {
+      return new Response(JSON.stringify({ error: "Invalid booking_id" }), {
+        status: 400, headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    if (!bookingData.customer_name || bookingData.customer_name.length < 2 || bookingData.customer_name.length > 100) {
+      return new Response(JSON.stringify({ error: "Invalid customer_name" }), {
+        status: 400, headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+    if (!bookingData.customer_phone || bookingData.customer_phone.length < 10 || bookingData.customer_phone.length > 15) {
+      return new Response(JSON.stringify({ error: "Invalid customer_phone" }), {
+        status: 400, headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    // Verify this booking actually exists in the database using service role
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    const { data: booking, error: dbError } = await supabaseAdmin
+      .from("bookings")
+      .select("id, booking_id")
+      .eq("booking_id", bookingData.booking_id)
+      .eq("customer_phone", bookingData.customer_phone)
+      .single();
+
+    if (dbError || !booking) {
+      return new Response(JSON.stringify({ error: "Booking not found" }), {
+        status: 403, headers: { "Content-Type": "application/json", ...corsHeaders },
+      });
+    }
+
+    // Escape all user input for HTML
+    const safeName = escapeHtml(bookingData.customer_name);
+    const safePhone = escapeHtml(bookingData.customer_phone);
+    const safeEmail = bookingData.customer_email ? escapeHtml(bookingData.customer_email) : "";
+    const safeDate = escapeHtml(bookingData.booking_date);
+    const safeTime = escapeHtml(bookingData.booking_time);
+    const safePurpose = escapeHtml(bookingData.purpose);
+    const safeMessage = bookingData.message ? escapeHtml(bookingData.message) : "";
+    const safeBookingId = escapeHtml(bookingData.booking_id);
+
     const adminEmailHtml = `
       <!DOCTYPE html>
       <html>
@@ -75,43 +129,17 @@ const handler = async (req: Request): Promise<Response> => {
             <h1>🗓️ New Booking Request</h1>
           </div>
           <div class="content">
-            <div class="booking-id">${bookingData.booking_id}</div>
-            
-            <div class="detail-row">
-              <span class="label">Customer:</span>
-              <span class="value">${bookingData.customer_name}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Phone:</span>
-              <span class="value">${bookingData.customer_phone}</span>
-            </div>
-            ${bookingData.customer_email ? `
-            <div class="detail-row">
-              <span class="label">Email:</span>
-              <span class="value">${bookingData.customer_email}</span>
-            </div>
-            ` : ''}
-            <div class="detail-row">
-              <span class="label">Date:</span>
-              <span class="value">${bookingData.booking_date}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Time:</span>
-              <span class="value">${bookingData.booking_time}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Purpose:</span>
-              <span class="value">${bookingData.purpose}</span>
-            </div>
-            ${bookingData.message ? `
-            <div class="detail-row">
-              <span class="label">Message:</span>
-              <span class="value">${bookingData.message}</span>
-            </div>
-            ` : ''}
+            <div class="booking-id">${safeBookingId}</div>
+            <div class="detail-row"><span class="label">Customer:</span><span class="value">${safeName}</span></div>
+            <div class="detail-row"><span class="label">Phone:</span><span class="value">${safePhone}</span></div>
+            ${safeEmail ? `<div class="detail-row"><span class="label">Email:</span><span class="value">${safeEmail}</span></div>` : ''}
+            <div class="detail-row"><span class="label">Date:</span><span class="value">${safeDate}</span></div>
+            <div class="detail-row"><span class="label">Time:</span><span class="value">${safeTime}</span></div>
+            <div class="detail-row"><span class="label">Purpose:</span><span class="value">${safePurpose}</span></div>
+            ${safeMessage ? `<div class="detail-row"><span class="label">Message:</span><span class="value">${safeMessage}</span></div>` : ''}
           </div>
           <div class="footer">
-            AARTI ENTERPRISE - SS & Aluminium Products<br>
+            AARTI ENTERPRISE - SS &amp; Aluminium Products<br>
             Shop No.7, Yamuna Mill Complex, Pratapnagar - Dabhoi Road, Vadodara - 390004
           </div>
         </div>
@@ -119,17 +147,14 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
-    // Send email to admin (using verified email for Resend free tier)
     const adminEmailResponse = await sendEmail(
       ["sunilbishnoi6530@gmail.com"],
-      `New Booking: ${bookingData.booking_id} - ${bookingData.customer_name}`,
+      `New Booking: ${safeBookingId} - ${safeName}`,
       adminEmailHtml
     );
 
-    console.log("Admin email sent successfully:", adminEmailResponse);
+    console.log("Admin email sent successfully");
 
-    // If customer provided email and it's the verified email, send confirmation
-    // Note: Resend free tier only allows sending to verified email
     let customerEmailResponse = null;
     if (bookingData.customer_email && bookingData.customer_email === "sunilbishnoi6530@gmail.com") {
       const customerEmailHtml = `
@@ -161,36 +186,28 @@ const handler = async (req: Request): Promise<Response> => {
               <p>Thank you for choosing AARTI ENTERPRISE</p>
             </div>
             <div class="content">
-              <p>Dear <strong>${bookingData.customer_name}</strong>,</p>
+              <p>Dear <strong>${safeName}</strong>,</p>
               <p>Your appointment has been successfully scheduled. Here are your booking details:</p>
-              
               <div class="booking-id">
                 <div class="booking-id-label">Your Booking ID</div>
-                <div class="booking-id-value">${bookingData.booking_id}</div>
+                <div class="booking-id-value">${safeBookingId}</div>
               </div>
-              
               <div class="appointment">
-                <strong>📅 ${bookingData.booking_date}</strong><br>
-                <strong>🕐 ${bookingData.booking_time}</strong>
+                <strong>📅 ${safeDate}</strong><br>
+                <strong>🕐 ${safeTime}</strong>
               </div>
-              
-              <div class="detail-row">
-                <span class="label">Purpose:</span> ${bookingData.purpose}
-              </div>
-              
-              <p style="margin-top: 20px;">We will contact you at <strong>${bookingData.customer_phone}</strong> to confirm your appointment.</p>
-              
+              <div class="detail-row"><span class="label">Purpose:</span> ${safePurpose}</div>
+              <p style="margin-top: 20px;">We will contact you at <strong>${safePhone}</strong> to confirm your appointment.</p>
               <div class="cta">
                 <a href="https://wa.me/919427055205">💬 Contact us on WhatsApp</a>
               </div>
-              
               <p><strong>Visit Us At:</strong><br>
               Shop No.7, Yamuna Mill Complex,<br>
               Pratapnagar - Dabhoi Road,<br>
               Vadodara - 390004</p>
             </div>
             <div class="footer">
-              AARTI ENTERPRISE - Premium SS & Aluminium Products<br>
+              AARTI ENTERPRISE - Premium SS &amp; Aluminium Products<br>
               📞 +91 94270 55205 | 📧 aartienterprise05@gmail.com
             </div>
           </div>
@@ -200,31 +217,21 @@ const handler = async (req: Request): Promise<Response> => {
 
       customerEmailResponse = await sendEmail(
         [bookingData.customer_email],
-        `Booking Confirmed - ${bookingData.booking_id} | AARTI ENTERPRISE`,
+        `Booking Confirmed - ${safeBookingId} | AARTI ENTERPRISE`,
         customerEmailHtml
       );
-      console.log("Customer email sent successfully:", customerEmailResponse);
+      console.log("Customer email sent successfully");
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
-        adminEmail: adminEmailResponse,
-        customerEmail: customerEmailResponse 
-      }),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      JSON.stringify({ success: true }),
+      { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   } catch (error: any) {
     console.error("Error in send-booking-email function:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { "Content-Type": "application/json", ...corsHeaders },
-      }
+      JSON.stringify({ error: "Internal server error" }),
+      { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   }
 };

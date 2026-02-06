@@ -126,13 +126,22 @@ const Booking = () => {
   const fetchBookings = async () => {
     const today = format(new Date(), 'yyyy-MM-dd');
     const { data, error } = await supabase
-      .from('bookings')
-      .select('id, booking_date, booking_time, status')
-      .gte('booking_date', today)
-      .in('status', ['pending', 'confirmed']);
+      .rpc('get_booking_counts', { start_date: today });
     
     if (!error && data) {
-      setExistingBookings(data);
+      // Convert aggregated counts to individual booking entries for slot availability
+      const bookingEntries: Array<{ id: string; booking_date: string; booking_time: string; status: string }> = [];
+      (data as Array<{ booking_date: string; booking_time: string; booking_count: number }>).forEach((row) => {
+        for (let i = 0; i < row.booking_count; i++) {
+          bookingEntries.push({
+            id: `${row.booking_date}-${row.booking_time}-${i}`,
+            booking_date: row.booking_date,
+            booking_time: row.booking_time,
+            status: 'confirmed',
+          });
+        }
+      });
+      setExistingBookings(bookingEntries);
     }
   };
 
