@@ -60,7 +60,7 @@ const Footer = () => {
                 <a href="https://www.instagram.com/aartienterprise.in" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 group">
                   <Instagram className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 </a>
-                <a href="#" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 group">
+                <a href="https://www.facebook.com/people/Aarti-Enterprise/61560933046455/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center hover:bg-primary hover:border-primary transition-all duration-300 group">
                   <Facebook className="w-5 h-5 group-hover:scale-110 transition-transform" />
                 </a>
               </div>
