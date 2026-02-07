@@ -257,7 +257,7 @@ const ProductDetail = () => {
                 <Button
                   size="lg"
                   onClick={handleAddToInquiry}
-                  className={`flex-1 gap-2 h-12 text-base ${added ? 'bg-green-500 hover:bg-green-600' : 'bg-primary hover:bg-primary/90'}`}
+                  className={`flex-1 w-full gap-2 h-12 text-base ${added ? 'bg-green-500 hover:bg-green-600' : 'bg-primary hover:bg-primary/90'}`}
                 >
                   {added ? (
                     <>
