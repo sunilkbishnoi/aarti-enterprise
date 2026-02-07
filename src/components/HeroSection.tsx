@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, MessageCircle, ChevronLeft, ChevronRight, Sparkles, TrendingUp, ShieldCheck, Truck } from 'lucide-react';
+import { ArrowRight, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroRailing from '@/assets/hero-railing.jpg';
 import heroWarehouse from '@/assets/hero-warehouse.jpg';
@@ -24,23 +24,12 @@ const slides = [{
   cta: "View Collection",
   image: heroDesigner
 }];
-const stats = [{
-  value: "10+",
-  label: "Years Experience",
-  icon: TrendingUp
-}, {
-  value: "5000+",
-  label: "Satisfied Clients",
-  icon: ShieldCheck
-}, {
-  value: "500+",
-  label: "Product Range",
-  icon: Sparkles
-}, {
-  value: "24hr",
-  label: "Fast Delivery",
-  icon: Truck
-}];
+const stats = [
+  { value: "10+", label: "Years Experience" },
+  { value: "5000+", label: "Satisfied Clients" },
+  { value: "500+", label: "Product Range" },
+  { value: "24hr", label: "Fast Delivery" },
+];
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   useEffect(() => {
@@ -105,19 +94,32 @@ const HeroSection = () => {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-16 lg:mt-24 animate-fade-up animation-delay-500">
-          {stats.map((stat, index) => <div key={index} className="counter-card group" style={{
-          animationDelay: `${500 + index * 100}ms`
-        }}>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center group-hover:bg-primary/30 transition-colors">
-                  <stat.icon className="w-5 h-5 text-primary" />
-                </div>
-                <p className="text-3xl lg:text-4xl font-display font-bold text-gradient-gold">{stat.value}</p>
+        {/* Stats Bar */}
+        <div className="mt-16 lg:mt-24 animate-fade-up animation-delay-500">
+          <div className="grid grid-cols-2 lg:grid-cols-4 relative">
+            {stats.map((stat, index) => (
+              <div
+                key={index}
+                className="relative text-center py-6 px-4 lg:px-6"
+                style={{ animationDelay: `${500 + index * 100}ms` }}
+              >
+                {/* Divider between items */}
+                {index > 0 && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-10 bg-gradient-to-b from-transparent via-white/20 to-transparent hidden lg:block" />
+                )}
+                {/* Top divider for mobile second row */}
+                {index >= 2 && (
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-16 bg-gradient-to-r from-transparent via-white/20 to-transparent lg:hidden" />
+                )}
+                <p className="text-4xl lg:text-5xl font-display font-bold text-gradient-gold tracking-tight leading-none mb-2">
+                  {stat.value}
+                </p>
+                <p className="text-xs sm:text-sm text-white/50 font-medium uppercase tracking-[0.15em]">
+                  {stat.label}
+                </p>
               </div>
-              <p className="text-sm text-white/60 font-medium">{stat.label}</p>
-            </div>)}
+            ))}
+          </div>
         </div>
       </div>
 
