@@ -13,7 +13,7 @@ const testimonials = [
     name: 'Welcom Hotel',
     role: 'Business Client',
     content: 'Premium Quality Steel Railing and Glass Railing most durable and modern style.',
-    rating: 5,
+    rating: 4,
     timeAgo: 'Recently',
   },
   {
