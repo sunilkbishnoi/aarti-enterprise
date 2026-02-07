@@ -90,50 +90,51 @@ const HeroSection = () => {
               </Button>
             </a>
           </div>
-        </div>
 
-        {/* Stats Bar */}
-        <div className="mt-16 lg:mt-24 animate-fade-up animation-delay-500">
-          <div className="grid grid-cols-2 lg:grid-cols-4 relative">
-            {stats.map((stat, index) => (
-              <div
+          {/* Slide dots - inline after buttons */}
+          <div className="flex items-center gap-2 mt-8">
+            {slides.map((_, index) => (
+              <button
                 key={index}
-                className="relative text-center py-6 px-4 lg:px-6"
-                style={{ animationDelay: `${500 + index * 100}ms` }}
-              >
-                {/* Divider between items */}
-                {index > 0 && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-10 bg-gradient-to-b from-transparent via-white/20 to-transparent hidden lg:block" />
-                )}
-                {/* Top divider for mobile second row */}
-                {index >= 2 && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 h-px w-16 bg-gradient-to-r from-transparent via-white/20 to-transparent lg:hidden" />
-                )}
-                <p className="text-4xl lg:text-5xl font-display font-bold text-gradient-gold tracking-tight leading-none mb-2">
-                  {stat.value}
-                </p>
-                <p className="text-xs sm:text-sm text-white/50 font-medium uppercase tracking-[0.15em]">
-                  {stat.label}
-                </p>
-              </div>
+                onClick={() => setCurrentSlide(index)}
+                className={`rounded-full transition-all duration-500 ${
+                  index === currentSlide
+                    ? 'w-8 h-2 bg-gradient-gold'
+                    : 'w-2 h-2 bg-white/25 hover:bg-white/50'
+                }`}
+              />
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Navigation - minimal dots only, positioned above stats */}
-      <div className="absolute bottom-[200px] lg:bottom-[160px] left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`rounded-full transition-all duration-500 ${
-              index === currentSlide
-                ? 'w-8 h-2 bg-gradient-gold'
-                : 'w-2 h-2 bg-white/25 hover:bg-white/50'
-            }`}
-          />
-        ))}
+        {/* Stats Bar - anchored to bottom */}
+        <div className="absolute bottom-0 left-0 right-0 z-20">
+          <div className="bg-charcoal/60 backdrop-blur-md border-t border-white/10">
+            <div className="container mx-auto px-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4">
+                {stats.map((stat, index) => (
+                  <div
+                    key={index}
+                    className="relative text-center py-5 lg:py-6 px-4"
+                  >
+                    {index > 0 && (
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-px h-8 bg-white/10 hidden lg:block" />
+                    )}
+                    {index === 2 && (
+                      <div className="absolute top-0 left-0 right-0 h-px bg-white/10 lg:hidden" />
+                    )}
+                    <p className="text-3xl lg:text-4xl font-display font-bold text-gradient-gold tracking-tight leading-none mb-1">
+                      {stat.value}
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-white/40 font-medium uppercase tracking-[0.2em]">
+                      {stat.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>;
 };
