@@ -39,15 +39,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    // Set up auth state listener BEFORE checking session
+    let initialSessionHandled = false;
+
+    // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+      async (event, currentSession) => {
+        // Skip INITIAL_SESSION event — we handle it via getSession below
+        if (event === 'INITIAL_SESSION') return;
+
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
         
-        if (session?.user) {
+        if (currentSession?.user) {
           setAdminLoading(true);
-          const adminStatus = await checkAdminRole(session.user.id);
+          const adminStatus = await checkAdminRole(currentSession.user.id);
           setIsAdmin(adminStatus);
           setAdminLoading(false);
         } else {
@@ -59,20 +64,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    // Check for existing session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    // Check for existing session (single source of truth for initial load)
+    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
+      if (initialSessionHandled) return;
+      initialSessionHandled = true;
+
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
       
-      if (session?.user) {
-        setAdminLoading(true);
-        const adminStatus = await checkAdminRole(session.user.id);
+      if (currentSession?.user) {
+        const adminStatus = await checkAdminRole(currentSession.user.id);
         setIsAdmin(adminStatus);
-        setAdminLoading(false);
-      } else {
-        setAdminLoading(false);
       }
       
+      setAdminLoading(false);
       setLoading(false);
     });
 
