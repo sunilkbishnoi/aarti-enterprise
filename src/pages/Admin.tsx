@@ -256,26 +256,28 @@ const Admin = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="bg-card/80 border border-border p-1.5 rounded-xl flex-wrap">
-            <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4">
+          <TabsList className="bg-card/80 border border-border p-1.5 rounded-xl w-full flex flex-wrap gap-1 h-auto">
+            <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-1.5 rounded-lg px-3 text-xs sm:text-sm sm:px-4">
               <LayoutDashboard className="w-4 h-4" />
-              Dashboard
+              <span className="hidden xs:inline">Dashboard</span>
             </TabsTrigger>
-            <TabsTrigger value="products" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4">
+            <TabsTrigger value="products" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-1.5 rounded-lg px-3 text-xs sm:text-sm sm:px-4">
               <Package className="w-4 h-4" />
-              Products ({products.length})
+              <span>Products</span>
+              <span className="hidden sm:inline">({products.length})</span>
             </TabsTrigger>
-            <TabsTrigger value="categories" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4">
+            <TabsTrigger value="categories" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-1.5 rounded-lg px-3 text-xs sm:text-sm sm:px-4">
               <Layers className="w-4 h-4" />
-              Categories ({categories.length})
+              <span>Categories</span>
+              <span className="hidden sm:inline">({categories.length})</span>
             </TabsTrigger>
-            <TabsTrigger value="grades" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4">
+            <TabsTrigger value="grades" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-1.5 rounded-lg px-3 text-xs sm:text-sm sm:px-4">
               <Tag className="w-4 h-4" />
-              Grades ({grades.length})
+              <span>Grades</span>
             </TabsTrigger>
-            <TabsTrigger value="bookings" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4">
+            <TabsTrigger value="bookings" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-1.5 rounded-lg px-3 text-xs sm:text-sm sm:px-4">
               <CalendarCheck className="w-4 h-4" />
-              Bookings
+              <span>Bookings</span>
             </TabsTrigger>
           </TabsList>
 
