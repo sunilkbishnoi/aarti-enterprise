@@ -673,14 +673,42 @@ const AdminProductManagement = ({ products, categories, onRefresh }: AdminProduc
                 />
               </div>
 
-              {/* Image */}
-              <div>
-                {product.image_url ? (
-                  <img src={product.image_url} alt={product.name} className="w-14 h-14 object-cover rounded-lg" />
-                ) : (
-                  <div className="w-14 h-14 bg-muted rounded-lg flex items-center justify-center">
-                    <Image className="w-5 h-5 text-muted-foreground" />
-                  </div>
+              {/* Image - click to change */}
+              <div className="relative group cursor-pointer">
+                <Label className="cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const url = await handleImageUpload(file);
+                      if (url) {
+                        const newImages = [...(product.images || []), url];
+                        await supabase.from('products').update({ image_url: url, images: newImages }).eq('id', product.id);
+                        onRefresh();
+                        toast({ title: "Image Updated", description: "Product image changed" });
+                      }
+                    }}
+                  />
+                  {product.image_url ? (
+                    <div className="relative">
+                      <img src={product.image_url} alt={product.name} className="w-14 h-14 object-cover rounded-lg" />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                        <Upload className="w-4 h-4 text-white" />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-14 h-14 bg-muted rounded-lg flex items-center justify-center hover:bg-muted/80 transition-colors">
+                      <Upload className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                  )}
+                </Label>
+                {product.images && product.images.length > 1 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full text-[9px] font-bold text-primary-foreground flex items-center justify-center">
+                    {product.images.length}
+                  </span>
                 )}
               </div>
 
