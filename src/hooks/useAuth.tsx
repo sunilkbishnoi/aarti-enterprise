@@ -39,47 +39,39 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    let initialSessionHandled = false;
-
-    // Set up auth state listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, currentSession) => {
-        // Skip INITIAL_SESSION event — we handle it via getSession below
-        if (event === 'INITIAL_SESSION') return;
-
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-        
-        if (currentSession?.user) {
-          setAdminLoading(true);
-          const adminStatus = await checkAdminRole(currentSession.user.id);
-          setIsAdmin(adminStatus);
-          setAdminLoading(false);
-        } else {
-          setIsAdmin(false);
-          setAdminLoading(false);
-        }
-        
-        setLoading(false);
-      }
-    );
-
-    // Check for existing session (single source of truth for initial load)
-    supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
-      if (initialSessionHandled) return;
-      initialSessionHandled = true;
-
+    const processSession = async (currentSession: Session | null) => {
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
       
       if (currentSession?.user) {
-        const adminStatus = await checkAdminRole(currentSession.user.id);
-        setIsAdmin(adminStatus);
+        try {
+          const adminStatus = await checkAdminRole(currentSession.user.id);
+          setIsAdmin(adminStatus);
+        } catch (err) {
+          console.error('Failed to check admin role:', err);
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
       }
       
       setAdminLoading(false);
       setLoading(false);
+    };
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      processSession(currentSession);
     });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, currentSession) => {
+        // Reset loading states for new auth events
+        setAdminLoading(true);
+        processSession(currentSession);
+      }
+    );
 
     return () => subscription.unsubscribe();
   }, []);
