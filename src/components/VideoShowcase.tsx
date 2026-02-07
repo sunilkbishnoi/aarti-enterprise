@@ -22,56 +22,56 @@ const videos: VideoItem[] = [
   {
     id: '1',
     thumbnail: videoHotelInstall,
-    title: 'Luxury Hotel Glass Railing Installation',
-    description: 'Complete glass railing installation at a 5-star hotel in Vadodara',
-    duration: '4:32',
+    title: 'SS Glass Railing Full Installation',
+    description: 'Complete stainless steel glass railing installation process for balcony and staircase',
+    duration: '12:45',
     category: 'installation',
-    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
+    youtubeId: '-jFUVgzcvuE'
   },
   {
     id: '2',
     thumbnail: videoSpiralInstall,
-    title: 'Spiral Staircase SS Railing',
-    description: 'Custom spiral staircase railing installation in modern villa',
-    duration: '3:45',
+    title: 'Stainless Steel Railing Step by Step',
+    description: 'Full staircase SS railing installation with detailed step-by-step process',
+    duration: '8:32',
     category: 'installation',
-    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
+    youtubeId: 'mKLoVszgUog'
   },
   {
     id: '3',
     thumbnail: videoElevatorInstall,
-    title: 'PVD Elevator Panel Installation',
-    description: 'Rose gold PVD coated SS panels for commercial elevator',
+    title: 'PVD Coating Process for SS Sheets',
+    description: 'How PVD vacuum coating creates stunning finishes on stainless steel sheets for architectural projects',
     duration: '5:18',
     category: 'installation',
-    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
+    youtubeId: 'smdkCiGrj9s'
   },
   {
     id: '4',
     thumbnail: videoTestimonial1,
-    title: 'Mr. Rajesh Patel - Builder',
-    description: '"AARTI ENTERPRISE has been our trusted supplier for 8+ years. Quality and service is unmatched."',
-    duration: '2:15',
-    category: 'testimonial',
-    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
+    title: 'Spigot Glass Railing Installation',
+    description: 'Professional spigot glass railing fitting for modern staircase design',
+    duration: '6:20',
+    category: 'installation',
+    youtubeId: 'LinTnWv1xCQ'
   },
   {
     id: '5',
     thumbnail: videoTestimonial2,
-    title: 'Ar. Priya Sharma - Architect',
-    description: '"Their designer sheets and custom solutions have elevated our projects significantly."',
-    duration: '2:48',
-    category: 'testimonial',
-    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
+    title: 'Steel Glass Railing Design & Making',
+    description: 'How to install and make stainless steel glass railing — complete design guide',
+    duration: '7:15',
+    category: 'installation',
+    youtubeId: 'gFxmNrIrmwk'
   },
   {
     id: '6',
     thumbnail: videoTestimonial3,
-    title: 'Mr. Vikram Mehta - Hotel Owner',
-    description: '"From glass railings to SS accessories, they delivered everything on time with perfection."',
-    duration: '3:02',
-    category: 'testimonial',
-    youtubeId: 'dQw4w9WgXcQ' // Replace with your actual YouTube video ID
+    title: 'SS Balcony Railing Design for Home',
+    description: 'Beautiful stainless steel balcony railing design and installation for residential homes',
+    duration: '9:40',
+    category: 'installation',
+    youtubeId: '1bKnAD-kqlo'
   }
 ];
 
