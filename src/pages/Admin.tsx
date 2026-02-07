@@ -16,7 +16,8 @@ import { useToast } from '@/hooks/use-toast';
 import { 
   LogOut, Plus, Pencil, Trash2, Upload, Package, 
   Tag, Layers, Image, RefreshCw, Home, AlertCircle,
-  IndianRupee, Check, X, Star, Eye, Search, CalendarCheck
+  IndianRupee, Check, X, Star, Eye, Search, CalendarCheck,
+  LayoutDashboard, MessageSquare, TrendingUp, Users
 } from 'lucide-react';
 import BookingManagement from '@/components/BookingManagement';
 import logo from '@/assets/logo.png';
@@ -61,6 +62,8 @@ const Admin = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [grades, setGrades] = useState<Grade[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [bookingsCount, setBookingsCount] = useState(0);
+  const [inquiries, setInquiries] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -122,8 +125,24 @@ const Admin = () => {
 
   const fetchData = async () => {
     setIsLoading(true);
-    await Promise.all([fetchCategories(), fetchGrades(), fetchProducts()]);
+    await Promise.all([fetchCategories(), fetchGrades(), fetchProducts(), fetchBookingsCount(), fetchInquiries()]);
     setIsLoading(false);
+  };
+
+  const fetchBookingsCount = async () => {
+    const { count, error } = await supabase
+      .from('bookings')
+      .select('*', { count: 'exact', head: true });
+    if (!error) setBookingsCount(count || 0);
+  };
+
+  const fetchInquiries = async () => {
+    const { data, error } = await supabase
+      .from('contact_inquiries')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10);
+    if (!error) setInquiries(data || []);
   };
 
   const fetchCategories = async () => {
@@ -477,8 +496,15 @@ const Admin = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
-        <Tabs defaultValue="products" className="space-y-6">
-          <TabsList className="bg-charcoal-light/80 border border-charcoal-medium p-1.5 rounded-xl">
+        <Tabs defaultValue="dashboard" className="space-y-6">
+          <TabsList className="bg-charcoal-light/80 border border-charcoal-medium p-1.5 rounded-xl flex-wrap">
+            <TabsTrigger 
+              value="dashboard" 
+              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4"
+            >
+              <LayoutDashboard className="w-4 h-4" />
+              Dashboard
+            </TabsTrigger>
             <TabsTrigger 
               value="products" 
               className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4"
@@ -508,6 +534,149 @@ const Admin = () => {
               Bookings
             </TabsTrigger>
           </TabsList>
+
+          {/* Dashboard Tab */}
+          <TabsContent value="dashboard" className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-display font-bold text-foreground">Dashboard</h2>
+              <p className="text-muted-foreground text-sm">Overview of your business at a glance</p>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
+                      <Package className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-foreground">{products.length}</p>
+                      <p className="text-xs text-muted-foreground">Total Products</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
+                      <Layers className="w-6 h-6 text-accent" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-foreground">{categories.length}</p>
+                      <p className="text-xs text-muted-foreground">Categories</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
+                      <CalendarCheck className="w-6 h-6 text-green-400" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-foreground">{bookingsCount}</p>
+                      <p className="text-xs text-muted-foreground">Total Bookings</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center">
+                      <MessageSquare className="w-6 h-6 text-yellow-400" />
+                    </div>
+                    <div>
+                      <p className="text-2xl font-bold text-foreground">{inquiries.length}</p>
+                      <p className="text-xs text-muted-foreground">Recent Inquiries</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Quick Stats Row */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Star className="w-5 h-5 text-yellow-400" />
+                    <span className="text-sm font-medium text-foreground">Featured Products</span>
+                  </div>
+                  <p className="text-3xl font-bold text-foreground">{products.filter(p => p.is_featured).length}</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <TrendingUp className="w-5 h-5 text-green-400" />
+                    <span className="text-sm font-medium text-foreground">In Stock</span>
+                  </div>
+                  <p className="text-3xl font-bold text-foreground">{products.filter(p => p.in_stock).length}</p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3 mb-3">
+                    <X className="w-5 h-5 text-red-400" />
+                    <span className="text-sm font-medium text-foreground">Out of Stock</span>
+                  </div>
+                  <p className="text-3xl font-bold text-foreground">{products.filter(p => !p.in_stock).length}</p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Recent Inquiries */}
+            <Card className="bg-charcoal-light/50 border-charcoal-medium">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-display font-bold text-foreground flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-primary" />
+                    Recent Contact Inquiries
+                  </h3>
+                  <Badge variant="outline" className="border-charcoal-medium text-muted-foreground">
+                    {inquiries.length} recent
+                  </Badge>
+                </div>
+                {inquiries.length === 0 ? (
+                  <p className="text-muted-foreground text-sm text-center py-8">No inquiries yet</p>
+                ) : (
+                  <div className="space-y-3">
+                    {inquiries.map((inq) => (
+                      <div key={inq.id} className="flex items-start justify-between gap-4 p-3 rounded-lg bg-charcoal/40 border border-charcoal-medium">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-medium text-foreground text-sm">{inq.name}</span>
+                            <Badge 
+                              variant="outline" 
+                              className={inq.status === 'new' ? 'border-yellow-500/50 text-yellow-400 text-xs' : 'border-green-500/50 text-green-400 text-xs'}
+                            >
+                              {inq.status}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground truncate">{inq.message}</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            📞 {inq.phone} {inq.email && `• ✉️ ${inq.email}`}
+                          </p>
+                        </div>
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">
+                          {new Date(inq.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Products Tab */}
           <TabsContent value="products" className="space-y-4">
