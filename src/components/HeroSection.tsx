@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import heroRailing from '@/assets/hero-railing.jpg';
 import heroWarehouse from '@/assets/hero-warehouse.jpg';
@@ -38,8 +38,6 @@ const HeroSection = () => {
     }, 6000);
     return () => clearInterval(timer);
   }, []);
-  const nextSlide = () => setCurrentSlide(prev => (prev + 1) % slides.length);
-  const prevSlide = () => setCurrentSlide(prev => (prev - 1 + slides.length) % slides.length);
   return <section className="relative min-h-[90vh] lg:min-h-screen flex items-center overflow-hidden">
       {/* Background Slides */}
       {slides.map((slide, index) => <div key={index} className={`absolute inset-0 transition-all duration-1000 ${index === currentSlide ? 'opacity-100 scale-100' : 'opacity-0 scale-105'}`}>
@@ -123,27 +121,19 @@ const HeroSection = () => {
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-6">
-        <button onClick={prevSlide} className="p-3 rounded-full glass-dark text-white hover:bg-primary hover:text-charcoal transition-all duration-300 group">
-          <ChevronLeft className="w-5 h-5 group-hover:scale-110 transition-transform" />
-        </button>
-        
-        <div className="flex gap-3">
-          {slides.map((_, index) => <button key={index} onClick={() => setCurrentSlide(index)} className={`h-2 rounded-full transition-all duration-500 ${index === currentSlide ? 'w-10 bg-gradient-gold' : 'w-2 bg-white/30 hover:bg-white/50'}`} />)}
-        </div>
-        
-        <button onClick={nextSlide} className="p-3 rounded-full glass-dark text-white hover:bg-primary hover:text-charcoal transition-all duration-300 group">
-          <ChevronRight className="w-5 h-5 group-hover:scale-110 transition-transform" />
-        </button>
-      </div>
-
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 right-8 z-20 hidden lg:block">
-        <div className="flex flex-col items-center gap-2 text-white/50">
-          <span className="text-xs font-medium tracking-widest uppercase rotate-90 origin-center translate-y-8">Scroll</span>
-          <div className="w-px h-16 bg-gradient-to-b from-white/50 to-transparent mt-12"></div>
-        </div>
+      {/* Navigation - minimal dots only, positioned above stats */}
+      <div className="absolute bottom-[200px] lg:bottom-[160px] left-1/2 -translate-x-1/2 z-20 flex items-center gap-3">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrentSlide(index)}
+            className={`rounded-full transition-all duration-500 ${
+              index === currentSlide
+                ? 'w-8 h-2 bg-gradient-gold'
+                : 'w-2 h-2 bg-white/25 hover:bg-white/50'
+            }`}
+          />
+        ))}
       </div>
     </section>;
 };
