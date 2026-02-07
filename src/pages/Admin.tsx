@@ -8,18 +8,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  LogOut, Plus, Pencil, Trash2, Upload, Package, 
-  Tag, Layers, Image, RefreshCw, Home, AlertCircle,
-  IndianRupee, Check, X, Star, Eye, Search, CalendarCheck,
-  LayoutDashboard, MessageSquare, TrendingUp, Users
+import {
+  LogOut, Plus, Pencil, Trash2, Upload, Package,
+  Tag, Layers, RefreshCw, Home, AlertCircle,
+  Eye, Star, CalendarCheck,
+  LayoutDashboard, MessageSquare, TrendingUp, X
 } from 'lucide-react';
 import BookingManagement from '@/components/BookingManagement';
+import AdminProductManagement from '@/components/AdminProductManagement';
 import logo from '@/assets/logo.png';
 
 interface Category {
@@ -58,46 +57,31 @@ const Admin = () => {
   const { user, isAdmin, loading, adminLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [grades, setGrades] = useState<Grade[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [bookingsCount, setBookingsCount] = useState(0);
   const [inquiries, setInquiries] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
-  
-  // Inline price editing
-  const [editingPriceId, setEditingPriceId] = useState<string | null>(null);
-  const [tempPrice, setTempPrice] = useState<number>(0);
-  
+
   // Dialogs
   const [categoryDialog, setCategoryDialog] = useState(false);
   const [gradeDialog, setGradeDialog] = useState(false);
-  const [productDialog, setProductDialog] = useState(false);
-  
+
   // Edit states
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [editingGrade, setEditingGrade] = useState<Grade | null>(null);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  
+
   // Form states
   const [categoryForm, setCategoryForm] = useState({ name: '', slug: '', description: '', image_url: '' });
   const [gradeForm, setGradeForm] = useState({ name: '', description: '' });
-  const [productForm, setProductForm] = useState({
-    name: '', slug: '', description: '', category_id: '', base_price: 0,
-    image_url: '', sizes: '', thicknesses: '', in_stock: true, is_featured: false
-  });
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/admin/login');
     } else if (!loading && !adminLoading && user && !isAdmin) {
-      toast({
-        title: "Access Denied",
-        description: "You don't have admin privileges.",
-        variant: "destructive",
-      });
+      toast({ title: "Access Denied", description: "You don't have admin privileges.", variant: "destructive" });
       navigate('/');
     }
   }, [user, isAdmin, loading, adminLoading, navigate, toast]);
@@ -117,10 +101,7 @@ const Admin = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => fetchCategories())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'grades' }, () => fetchGrades())
       .subscribe();
-    
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   };
 
   const fetchData = async () => {
@@ -130,301 +111,90 @@ const Admin = () => {
   };
 
   const fetchBookingsCount = async () => {
-    const { count, error } = await supabase
-      .from('bookings')
-      .select('*', { count: 'exact', head: true });
-    if (!error) setBookingsCount(count || 0);
+    const { count } = await supabase.from('bookings').select('*', { count: 'exact', head: true });
+    if (count !== null) setBookingsCount(count);
   };
 
   const fetchInquiries = async () => {
-    const { data, error } = await supabase
-      .from('contact_inquiries')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(10);
-    if (!error) setInquiries(data || []);
+    const { data } = await supabase.from('contact_inquiries').select('*').order('created_at', { ascending: false }).limit(10);
+    if (data) setInquiries(data);
   };
 
   const fetchCategories = async () => {
-    const { data, error } = await supabase
-      .from('categories')
-      .select('*')
-      .order('display_order');
-    
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      setCategories(data || []);
-    }
+    const { data, error } = await supabase.from('categories').select('*').order('display_order');
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else setCategories(data || []);
   };
 
   const fetchGrades = async () => {
-    const { data, error } = await supabase
-      .from('grades')
-      .select('*')
-      .order('display_order');
-    
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      setGrades(data || []);
-    }
+    const { data, error } = await supabase.from('grades').select('*').order('display_order');
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else setGrades(data || []);
   };
 
   const fetchProducts = async () => {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*')
-      .order('display_order');
-    
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      setProducts(data || []);
-    }
+    const { data, error } = await supabase.from('products').select('*').order('display_order');
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else setProducts(data || []);
   };
 
   const handleImageUpload = async (file: File, type: 'product' | 'category') => {
     const fileExt = file.name.split('.').pop();
     const fileName = `${type}-${Date.now()}.${fileExt}`;
-    
-    const { error } = await supabase.storage
-      .from('product-images')
-      .upload(fileName, file);
-    
-    if (error) {
-      toast({ title: "Upload Failed", description: error.message, variant: "destructive" });
-      return null;
-    }
-    
-    const { data: { publicUrl } } = supabase.storage
-      .from('product-images')
-      .getPublicUrl(fileName);
-    
+    const { error } = await supabase.storage.from('product-images').upload(fileName, file);
+    if (error) { toast({ title: "Upload Failed", description: error.message, variant: "destructive" }); return null; }
+    const { data: { publicUrl } } = supabase.storage.from('product-images').getPublicUrl(fileName);
     return publicUrl;
-  };
-
-  // Quick price update
-  const startPriceEdit = (product: Product) => {
-    setEditingPriceId(product.id);
-    setTempPrice(product.base_price);
-  };
-
-  const savePriceEdit = async () => {
-    if (!editingPriceId) return;
-    
-    const { error } = await supabase
-      .from('products')
-      .update({ base_price: tempPrice })
-      .eq('id', editingPriceId);
-    
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Price Updated", description: `Price changed to ₹${tempPrice}` });
-      setEditingPriceId(null);
-    }
-  };
-
-  const cancelPriceEdit = () => {
-    setEditingPriceId(null);
-    setTempPrice(0);
-  };
-
-  // Toggle stock status
-  const toggleStock = async (product: Product) => {
-    const { error } = await supabase
-      .from('products')
-      .update({ in_stock: !product.in_stock })
-      .eq('id', product.id);
-    
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    }
-  };
-
-  // Toggle featured status
-  const toggleFeatured = async (product: Product) => {
-    const { error } = await supabase
-      .from('products')
-      .update({ is_featured: !product.is_featured })
-      .eq('id', product.id);
-    
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    }
   };
 
   // Category CRUD
   const saveCategory = async () => {
     const slug = categoryForm.slug || categoryForm.name.toLowerCase().replace(/\s+/g, '-');
-    
     if (editingCategory) {
-      const { error } = await supabase
-        .from('categories')
-        .update({ ...categoryForm, slug })
-        .eq('id', editingCategory.id);
-      
-      if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Success", description: "Category updated" });
-        setCategoryDialog(false);
-        resetCategoryForm();
-      }
+      const { error } = await supabase.from('categories').update({ ...categoryForm, slug }).eq('id', editingCategory.id);
+      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+      else { toast({ title: "Success", description: "Category updated" }); setCategoryDialog(false); resetCategoryForm(); }
     } else {
-      const { error } = await supabase
-        .from('categories')
-        .insert({ ...categoryForm, slug });
-      
-      if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Success", description: "Category created" });
-        setCategoryDialog(false);
-        resetCategoryForm();
-      }
+      const { error } = await supabase.from('categories').insert({ ...categoryForm, slug });
+      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+      else { toast({ title: "Success", description: "Category created" }); setCategoryDialog(false); resetCategoryForm(); }
     }
   };
 
   const deleteCategory = async (id: string) => {
     const { error } = await supabase.from('categories').delete().eq('id', id);
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Deleted", description: "Category removed" });
-    }
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else toast({ title: "Deleted", description: "Category removed" });
   };
 
-  const resetCategoryForm = () => {
-    setCategoryForm({ name: '', slug: '', description: '', image_url: '' });
-    setEditingCategory(null);
-  };
+  const resetCategoryForm = () => { setCategoryForm({ name: '', slug: '', description: '', image_url: '' }); setEditingCategory(null); };
 
   // Grade CRUD
   const saveGrade = async () => {
     if (editingGrade) {
-      const { error } = await supabase
-        .from('grades')
-        .update(gradeForm)
-        .eq('id', editingGrade.id);
-      
-      if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Success", description: "Grade updated" });
-        setGradeDialog(false);
-        resetGradeForm();
-      }
+      const { error } = await supabase.from('grades').update(gradeForm).eq('id', editingGrade.id);
+      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+      else { toast({ title: "Success", description: "Grade updated" }); setGradeDialog(false); resetGradeForm(); }
     } else {
       const { error } = await supabase.from('grades').insert(gradeForm);
-      
-      if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Success", description: "Grade created" });
-        setGradeDialog(false);
-        resetGradeForm();
-      }
+      if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+      else { toast({ title: "Success", description: "Grade created" }); setGradeDialog(false); resetGradeForm(); }
     }
   };
 
   const deleteGrade = async (id: string) => {
     const { error } = await supabase.from('grades').delete().eq('id', id);
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Deleted", description: "Grade removed" });
-    }
+    if (error) toast({ title: "Error", description: error.message, variant: "destructive" });
+    else toast({ title: "Deleted", description: "Grade removed" });
   };
 
-  const resetGradeForm = () => {
-    setGradeForm({ name: '', description: '' });
-    setEditingGrade(null);
-  };
+  const resetGradeForm = () => { setGradeForm({ name: '', description: '' }); setEditingGrade(null); };
 
-  // Product CRUD
-  const saveProduct = async () => {
-    const slug = productForm.slug || productForm.name.toLowerCase().replace(/\s+/g, '-');
-    const sizes = productForm.sizes.split(',').map(s => s.trim()).filter(Boolean);
-    const thicknesses = productForm.thicknesses.split(',').map(s => s.trim()).filter(Boolean);
-    
-    const productData = {
-      name: productForm.name,
-      slug,
-      description: productForm.description,
-      category_id: productForm.category_id || null,
-      base_price: productForm.base_price,
-      image_url: productForm.image_url,
-      images: productForm.image_url ? [productForm.image_url] : [],
-      sizes,
-      thicknesses,
-      in_stock: productForm.in_stock,
-      is_featured: productForm.is_featured,
-    };
-    
-    if (editingProduct) {
-      const { error } = await supabase
-        .from('products')
-        .update(productData)
-        .eq('id', editingProduct.id);
-      
-      if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Success", description: "Product updated" });
-        setProductDialog(false);
-        resetProductForm();
-      }
-    } else {
-      const { error } = await supabase.from('products').insert(productData);
-      
-      if (error) {
-        toast({ title: "Error", description: error.message, variant: "destructive" });
-      } else {
-        toast({ title: "Success", description: "Product created" });
-        setProductDialog(false);
-        resetProductForm();
-      }
-    }
-  };
-
-  const deleteProduct = async (id: string) => {
-    const { error } = await supabase.from('products').delete().eq('id', id);
-    if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Deleted", description: "Product removed" });
-    }
-  };
-
-  const resetProductForm = () => {
-    setProductForm({
-      name: '', slug: '', description: '', category_id: '', base_price: 0,
-      image_url: '', sizes: '', thicknesses: '', in_stock: true, is_featured: false
-    });
-    setEditingProduct(null);
-  };
-
-  const handleLogout = async () => {
-    await signOut();
-    navigate('/');
-  };
-
-  const getCategoryName = (categoryId: string | null) => {
-    if (!categoryId) return 'Uncategorized';
-    const cat = categories.find(c => c.id === categoryId);
-    return cat?.name || 'Unknown';
-  };
-
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    p.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handleLogout = async () => { await signOut(); navigate('/'); };
 
   if (loading || adminLoading || isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-dark flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-dark dark flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-4" />
           <p className="text-muted-foreground">Loading admin panel...</p>
@@ -435,8 +205,8 @@ const Admin = () => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-gradient-dark flex items-center justify-center p-4">
-        <Card className="bg-charcoal-light/50 backdrop-blur-xl border-charcoal-medium max-w-md">
+      <div className="min-h-screen bg-gradient-dark dark flex items-center justify-center p-4">
+        <Card className="bg-card/50 backdrop-blur-xl border-border max-w-md">
           <CardContent className="pt-8 text-center">
             <AlertCircle className="w-16 h-16 text-destructive mx-auto mb-4" />
             <h2 className="text-xl font-bold text-foreground mb-2">Access Denied</h2>
@@ -452,9 +222,9 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-dark">
+    <div className="min-h-screen bg-gradient-dark dark">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-charcoal/95 backdrop-blur-xl border-b border-charcoal-medium shadow-lg">
+      <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-xl border-b border-border shadow-lg">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
@@ -466,23 +236,12 @@ const Admin = () => {
                 <p className="text-xs text-muted-foreground">{user?.email}</p>
               </div>
             </div>
-            
             <div className="flex items-center gap-3">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => navigate('/')} 
-                className="border-charcoal-medium text-foreground hover:bg-charcoal-medium gap-2"
-              >
+              <Button variant="outline" size="sm" onClick={() => navigate('/')} className="border-border text-foreground hover:bg-muted gap-2">
                 <Eye className="w-4 h-4" />
                 <span className="hidden sm:inline">View Site</span>
               </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={fetchData} 
-                className="border-charcoal-medium text-foreground hover:bg-charcoal-medium"
-              >
+              <Button variant="outline" size="sm" onClick={fetchData} className="border-border text-foreground hover:bg-muted">
                 <RefreshCw className="w-4 h-4" />
               </Button>
               <Button variant="destructive" size="sm" onClick={handleLogout} className="gap-2">
@@ -497,39 +256,24 @@ const Admin = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="bg-charcoal-light/80 border border-charcoal-medium p-1.5 rounded-xl flex-wrap">
-            <TabsTrigger 
-              value="dashboard" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4"
-            >
+          <TabsList className="bg-card/80 border border-border p-1.5 rounded-xl flex-wrap">
+            <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4">
               <LayoutDashboard className="w-4 h-4" />
               Dashboard
             </TabsTrigger>
-            <TabsTrigger 
-              value="products" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4"
-            >
+            <TabsTrigger value="products" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4">
               <Package className="w-4 h-4" />
               Products ({products.length})
             </TabsTrigger>
-            <TabsTrigger 
-              value="categories" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4"
-            >
+            <TabsTrigger value="categories" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4">
               <Layers className="w-4 h-4" />
               Categories ({categories.length})
             </TabsTrigger>
-            <TabsTrigger 
-              value="grades" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4"
-            >
+            <TabsTrigger value="grades" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4">
               <Tag className="w-4 h-4" />
               Grades ({grades.length})
             </TabsTrigger>
-            <TabsTrigger 
-              value="bookings" 
-              className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4"
-            >
+            <TabsTrigger value="bookings" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-2 rounded-lg px-4">
               <CalendarCheck className="w-4 h-4" />
               Bookings
             </TabsTrigger>
@@ -542,9 +286,8 @@ const Admin = () => {
               <p className="text-muted-foreground text-sm">Overview of your business at a glance</p>
             </div>
 
-            {/* Stats Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center">
@@ -557,8 +300,7 @@ const Admin = () => {
                   </div>
                 </CardContent>
               </Card>
-
-              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center">
@@ -571,12 +313,11 @@ const Admin = () => {
                   </div>
                 </CardContent>
               </Card>
-
-              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
-                      <CalendarCheck className="w-6 h-6 text-green-400" />
+                    <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                      <CalendarCheck className="w-6 h-6 text-emerald-400" />
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-foreground">{bookingsCount}</p>
@@ -585,12 +326,11 @@ const Admin = () => {
                   </div>
                 </CardContent>
               </Card>
-
-              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-yellow-500/20 flex items-center justify-center">
-                      <MessageSquare className="w-6 h-6 text-yellow-400" />
+                    <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
+                      <MessageSquare className="w-6 h-6 text-amber-400" />
                     </div>
                     <div>
                       <p className="text-2xl font-bold text-foreground">{inquiries.length}</p>
@@ -601,29 +341,26 @@ const Admin = () => {
               </Card>
             </div>
 
-            {/* Quick Stats Row */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3 mb-3">
-                    <Star className="w-5 h-5 text-yellow-400" />
+                    <Star className="w-5 h-5 text-amber-400" />
                     <span className="text-sm font-medium text-foreground">Featured Products</span>
                   </div>
                   <p className="text-3xl font-bold text-foreground">{products.filter(p => p.is_featured).length}</p>
                 </CardContent>
               </Card>
-
-              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3 mb-3">
-                    <TrendingUp className="w-5 h-5 text-green-400" />
+                    <TrendingUp className="w-5 h-5 text-emerald-400" />
                     <span className="text-sm font-medium text-foreground">In Stock</span>
                   </div>
                   <p className="text-3xl font-bold text-foreground">{products.filter(p => p.in_stock).length}</p>
                 </CardContent>
               </Card>
-
-              <Card className="bg-charcoal-light/50 border-charcoal-medium">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="pt-6">
                   <div className="flex items-center gap-3 mb-3">
                     <X className="w-5 h-5 text-red-400" />
@@ -635,14 +372,14 @@ const Admin = () => {
             </div>
 
             {/* Recent Inquiries */}
-            <Card className="bg-charcoal-light/50 border-charcoal-medium">
+            <Card className="bg-card/50 border-border">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-display font-bold text-foreground flex items-center gap-2">
                     <MessageSquare className="w-5 h-5 text-primary" />
                     Recent Contact Inquiries
                   </h3>
-                  <Badge variant="outline" className="border-charcoal-medium text-muted-foreground">
+                  <Badge variant="outline" className="border-border text-muted-foreground">
                     {inquiries.length} recent
                   </Badge>
                 </div>
@@ -651,13 +388,13 @@ const Admin = () => {
                 ) : (
                   <div className="space-y-3">
                     {inquiries.map((inq) => (
-                      <div key={inq.id} className="flex items-start justify-between gap-4 p-3 rounded-lg bg-charcoal/40 border border-charcoal-medium">
+                      <div key={inq.id} className="flex items-start justify-between gap-4 p-3 rounded-lg bg-muted/30 border border-border">
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium text-foreground text-sm">{inq.name}</span>
-                            <Badge 
-                              variant="outline" 
-                              className={inq.status === 'new' ? 'border-yellow-500/50 text-yellow-400 text-xs' : 'border-green-500/50 text-green-400 text-xs'}
+                            <Badge
+                              variant="outline"
+                              className={inq.status === 'new' ? 'border-amber-500/50 text-amber-400 text-xs' : 'border-emerald-500/50 text-emerald-400 text-xs'}
                             >
                               {inq.status}
                             </Badge>
@@ -680,365 +417,11 @@ const Admin = () => {
 
           {/* Products Tab */}
           <TabsContent value="products" className="space-y-4">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <h2 className="text-2xl font-display font-bold text-foreground">Products</h2>
-                <p className="text-muted-foreground text-sm">Manage your product catalog and pricing</p>
-              </div>
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <div className="relative flex-1 sm:flex-initial">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search products..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9 bg-charcoal-light border-charcoal-medium text-foreground w-full sm:w-64"
-                  />
-                </div>
-                <Dialog open={productDialog} onOpenChange={setProductDialog}>
-                  <DialogTrigger asChild>
-                    <Button className="btn-modern whitespace-nowrap" onClick={resetProductForm}>
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add Product
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="bg-charcoal-light border-charcoal-medium max-w-2xl max-h-[90vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle className="text-foreground">{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
-                      <DialogDescription>Fill in the product details below.</DialogDescription>
-                    </DialogHeader>
-                    
-                    <div className="grid gap-4 py-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label className="text-foreground">Name *</Label>
-                          <Input
-                            value={productForm.name}
-                            onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
-                            className="bg-charcoal border-charcoal-medium text-foreground"
-                            placeholder="SS Round Pipe"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-foreground">Slug</Label>
-                          <Input
-                            value={productForm.slug}
-                            onChange={(e) => setProductForm({ ...productForm, slug: e.target.value })}
-                            className="bg-charcoal border-charcoal-medium text-foreground"
-                            placeholder="ss-round-pipe"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label className="text-foreground">Description</Label>
-                        <Textarea
-                          value={productForm.description}
-                          onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
-                          className="bg-charcoal border-charcoal-medium text-foreground"
-                          rows={3}
-                        />
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label className="text-foreground">Category</Label>
-                          <Select
-                            value={productForm.category_id}
-                            onValueChange={(v) => setProductForm({ ...productForm, category_id: v })}
-                          >
-                            <SelectTrigger className="bg-charcoal border-charcoal-medium text-foreground">
-                              <SelectValue placeholder="Select category" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-charcoal border-charcoal-medium">
-                              {categories.map((cat) => (
-                                <SelectItem key={cat.id} value={cat.id} className="text-foreground">
-                                  {cat.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-foreground">Base Price (₹) *</Label>
-                          <Input
-                            type="number"
-                            value={productForm.base_price}
-                            onChange={(e) => setProductForm({ ...productForm, base_price: Number(e.target.value) })}
-                            className="bg-charcoal border-charcoal-medium text-foreground"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <Label className="text-foreground">Image URL</Label>
-                        <div className="flex gap-2">
-                          <Input
-                            value={productForm.image_url}
-                            onChange={(e) => setProductForm({ ...productForm, image_url: e.target.value })}
-                            className="bg-charcoal border-charcoal-medium text-foreground flex-1"
-                            placeholder="https://..."
-                          />
-                          <Label className="cursor-pointer">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              className="hidden"
-                              onChange={async (e) => {
-                                const file = e.target.files?.[0];
-                                if (file) {
-                                  const url = await handleImageUpload(file, 'product');
-                                  if (url) setProductForm({ ...productForm, image_url: url });
-                                }
-                              }}
-                            />
-                            <div className="h-10 px-4 flex items-center gap-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 cursor-pointer">
-                              <Upload className="w-4 h-4" />
-                              Upload
-                            </div>
-                          </Label>
-                        </div>
-                        {productForm.image_url && (
-                          <img src={productForm.image_url} alt="Preview" className="w-24 h-24 object-cover rounded-lg mt-2" />
-                        )}
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label className="text-foreground">Sizes (comma-separated)</Label>
-                          <Input
-                            value={productForm.sizes}
-                            onChange={(e) => setProductForm({ ...productForm, sizes: e.target.value })}
-                            className="bg-charcoal border-charcoal-medium text-foreground"
-                            placeholder='1", 2", 3"'
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label className="text-foreground">Thicknesses (comma-separated)</Label>
-                          <Input
-                            value={productForm.thicknesses}
-                            onChange={(e) => setProductForm({ ...productForm, thicknesses: e.target.value })}
-                            className="bg-charcoal border-charcoal-medium text-foreground"
-                            placeholder="1.0mm, 1.2mm, 1.5mm"
-                          />
-                        </div>
-                      </div>
-                      
-                      <div className="flex gap-6">
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            checked={productForm.in_stock}
-                            onCheckedChange={(v) => setProductForm({ ...productForm, in_stock: v })}
-                          />
-                          <Label className="text-foreground">In Stock</Label>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Switch
-                            checked={productForm.is_featured}
-                            onCheckedChange={(v) => setProductForm({ ...productForm, is_featured: v })}
-                          />
-                          <Label className="text-foreground">Featured</Label>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex justify-end gap-3">
-                      <Button variant="outline" onClick={() => setProductDialog(false)} className="border-charcoal-medium text-foreground">
-                        Cancel
-                      </Button>
-                      <Button onClick={saveProduct} className="btn-modern">
-                        {editingProduct ? 'Update' : 'Create'} Product
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            </div>
-            
-            {/* Products Grid */}
-            <div className="grid gap-4">
-              {filteredProducts.length === 0 ? (
-                <Card className="bg-charcoal-light/50 border-charcoal-medium border-dashed">
-                  <CardContent className="py-16 text-center">
-                    <div className="w-20 h-20 bg-charcoal rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Package className="w-10 h-10 text-muted-foreground" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2">
-                      {searchTerm ? 'No products found' : 'No products yet'}
-                    </h3>
-                    <p className="text-muted-foreground mb-6">
-                      {searchTerm ? 'Try a different search term' : 'Add your first product to get started!'}
-                    </p>
-                    {!searchTerm && (
-                      <Button className="btn-modern" onClick={() => { resetProductForm(); setProductDialog(true); }}>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Product
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              ) : (
-                <div className="bg-charcoal-light/30 rounded-xl border border-charcoal-medium overflow-hidden">
-                  {/* Table Header */}
-                  <div className="hidden md:grid md:grid-cols-[80px_1fr_150px_120px_100px_100px_120px] gap-4 p-4 bg-charcoal/50 border-b border-charcoal-medium text-sm font-medium text-muted-foreground">
-                    <div>Image</div>
-                    <div>Product Details</div>
-                    <div>Category</div>
-                    <div>Price</div>
-                    <div className="text-center">Stock</div>
-                    <div className="text-center">Featured</div>
-                    <div className="text-right">Actions</div>
-                  </div>
-                  
-                  {/* Table Rows */}
-                  {filteredProducts.map((product, index) => (
-                    <div 
-                      key={product.id} 
-                      className={`grid md:grid-cols-[80px_1fr_150px_120px_100px_100px_120px] gap-4 p-4 items-center hover:bg-charcoal/30 transition-colors ${
-                        index !== filteredProducts.length - 1 ? 'border-b border-charcoal-medium/50' : ''
-                      }`}
-                    >
-                      {/* Image */}
-                      <div>
-                        {product.image_url ? (
-                          <img 
-                            src={product.image_url} 
-                            alt={product.name} 
-                            className="w-16 h-16 object-cover rounded-lg shadow-md" 
-                          />
-                        ) : (
-                          <div className="w-16 h-16 bg-charcoal rounded-lg flex items-center justify-center">
-                            <Image className="w-6 h-6 text-muted-foreground" />
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Product Details */}
-                      <div className="min-w-0">
-                        <h3 className="font-semibold text-foreground truncate">{product.name}</h3>
-                        <p className="text-sm text-muted-foreground truncate">{product.description || 'No description'}</p>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {product.sizes.slice(0, 3).map((size, i) => (
-                            <Badge key={i} variant="outline" className="text-xs border-charcoal-medium">
-                              {size}
-                            </Badge>
-                          ))}
-                          {product.sizes.length > 3 && (
-                            <Badge variant="outline" className="text-xs border-charcoal-medium">
-                              +{product.sizes.length - 3}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                      
-                      {/* Category */}
-                      <div className="hidden md:block">
-                        <Badge className="bg-charcoal text-foreground border-0">
-                          {getCategoryName(product.category_id)}
-                        </Badge>
-                      </div>
-                      
-                      {/* Price - Inline Edit */}
-                      <div className="flex items-center gap-2">
-                        {editingPriceId === product.id ? (
-                          <div className="flex items-center gap-1">
-                            <Input
-                              type="number"
-                              value={tempPrice}
-                              onChange={(e) => setTempPrice(Number(e.target.value))}
-                              className="w-20 h-8 text-sm bg-charcoal border-primary text-foreground"
-                              autoFocus
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter') savePriceEdit();
-                                if (e.key === 'Escape') cancelPriceEdit();
-                              }}
-                            />
-                            <Button size="icon" variant="ghost" onClick={savePriceEdit} className="h-7 w-7 text-emerald-400 hover:text-emerald-300">
-                              <Check className="w-4 h-4" />
-                            </Button>
-                            <Button size="icon" variant="ghost" onClick={cancelPriceEdit} className="h-7 w-7 text-destructive hover:text-destructive/80">
-                              <X className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        ) : (
-                          <button
-                            onClick={() => startPriceEdit(product)}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg transition-colors group"
-                          >
-                            <IndianRupee className="w-3.5 h-3.5" />
-                            <span className="font-semibold">{product.base_price.toLocaleString()}</span>
-                            <Pencil className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity ml-1" />
-                          </button>
-                        )}
-                      </div>
-                      
-                      {/* Stock Toggle */}
-                      <div className="flex justify-center">
-                        <button
-                          onClick={() => toggleStock(product)}
-                          className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                            product.in_stock 
-                              ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30' 
-                              : 'bg-destructive/20 text-destructive hover:bg-destructive/30'
-                          }`}
-                        >
-                          {product.in_stock ? 'In Stock' : 'Out'}
-                        </button>
-                      </div>
-                      
-                      {/* Featured Toggle */}
-                      <div className="flex justify-center">
-                        <button
-                          onClick={() => toggleFeatured(product)}
-                          className={`p-2 rounded-lg transition-colors ${
-                            product.is_featured 
-                              ? 'bg-primary/20 text-primary' 
-                              : 'bg-charcoal text-muted-foreground hover:text-foreground'
-                          }`}
-                        >
-                          <Star className={`w-4 h-4 ${product.is_featured ? 'fill-primary' : ''}`} />
-                        </button>
-                      </div>
-                      
-                      {/* Actions */}
-                      <div className="flex items-center justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            setEditingProduct(product);
-                            setProductForm({
-                              name: product.name,
-                              slug: product.slug,
-                              description: product.description || '',
-                              category_id: product.category_id || '',
-                              base_price: product.base_price,
-                              image_url: product.image_url || '',
-                              sizes: product.sizes.join(', '),
-                              thicknesses: product.thicknesses.join(', '),
-                              in_stock: product.in_stock,
-                              is_featured: product.is_featured,
-                            });
-                            setProductDialog(true);
-                          }}
-                          className="border-charcoal-medium text-foreground hover:bg-charcoal-medium h-8 w-8 p-0"
-                        >
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={() => deleteProduct(product.id)}
-                          className="h-8 w-8 p-0"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <AdminProductManagement
+              products={products}
+              categories={categories}
+              onRefresh={fetchProducts}
+            />
           </TabsContent>
 
           {/* Categories Tab */}
@@ -1055,18 +438,17 @@ const Admin = () => {
                     Add Category
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-charcoal-light border-charcoal-medium">
+                <DialogContent className="bg-card border-border">
                   <DialogHeader>
                     <DialogTitle className="text-foreground">{editingCategory ? 'Edit Category' : 'Add New Category'}</DialogTitle>
                   </DialogHeader>
-                  
                   <div className="grid gap-4 py-4">
                     <div className="space-y-2">
                       <Label className="text-foreground">Name *</Label>
                       <Input
                         value={categoryForm.name}
                         onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
-                        className="bg-charcoal border-charcoal-medium text-foreground"
+                        className="bg-background border-border text-foreground"
                       />
                     </div>
                     <div className="space-y-2">
@@ -1074,7 +456,7 @@ const Admin = () => {
                       <Textarea
                         value={categoryForm.description}
                         onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
-                        className="bg-charcoal border-charcoal-medium text-foreground"
+                        className="bg-background border-border text-foreground"
                       />
                     </div>
                     <div className="space-y-2">
@@ -1083,7 +465,7 @@ const Admin = () => {
                         <Input
                           value={categoryForm.image_url}
                           onChange={(e) => setCategoryForm({ ...categoryForm, image_url: e.target.value })}
-                          className="bg-charcoal border-charcoal-medium text-foreground flex-1"
+                          className="bg-background border-border text-foreground flex-1"
                         />
                         <Label className="cursor-pointer">
                           <input
@@ -1105,54 +487,42 @@ const Admin = () => {
                       </div>
                     </div>
                   </div>
-                  
                   <div className="flex justify-end gap-3">
-                    <Button variant="outline" onClick={() => setCategoryDialog(false)} className="border-charcoal-medium text-foreground">
-                      Cancel
-                    </Button>
-                    <Button onClick={saveCategory} className="btn-modern">
-                      {editingCategory ? 'Update' : 'Create'}
-                    </Button>
+                    <Button variant="outline" onClick={() => setCategoryDialog(false)} className="border-border text-foreground">Cancel</Button>
+                    <Button onClick={saveCategory} className="btn-modern">{editingCategory ? 'Update' : 'Create'}</Button>
                   </div>
                 </DialogContent>
               </Dialog>
             </div>
-            
+
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {categories.map((category) => (
-                <Card key={category.id} className="bg-charcoal-light/50 border-charcoal-medium hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5 group">
+                <Card key={category.id} className="bg-card/50 border-border hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5 group">
                   <CardContent className="p-5">
                     <div className="flex items-start gap-4">
                       {category.image_url ? (
                         <img src={category.image_url} alt={category.name} className="w-16 h-16 object-cover rounded-lg" />
                       ) : (
-                        <div className="w-16 h-16 bg-charcoal rounded-lg flex items-center justify-center">
+                        <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center">
                           <Layers className="w-6 h-6 text-muted-foreground" />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-semibold text-foreground">{category.name}</h3>
                         <p className="text-sm text-muted-foreground">{category.slug}</p>
-                        {category.description && (
-                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{category.description}</p>
-                        )}
+                        {category.description && <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{category.description}</p>}
                       </div>
                     </div>
-                    <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-charcoal-medium">
+                    <div className="flex justify-end gap-2 mt-4 pt-4 border-t border-border">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => {
                           setEditingCategory(category);
-                          setCategoryForm({
-                            name: category.name,
-                            slug: category.slug,
-                            description: category.description || '',
-                            image_url: category.image_url || '',
-                          });
+                          setCategoryForm({ name: category.name, slug: category.slug, description: category.description || '', image_url: category.image_url || '' });
                           setCategoryDialog(true);
                         }}
-                        className="border-charcoal-medium text-foreground hover:bg-charcoal-medium"
+                        className="border-border text-foreground hover:bg-muted"
                       >
                         <Pencil className="w-4 h-4 mr-2" />
                         Edit
@@ -1181,18 +551,17 @@ const Admin = () => {
                     Add Grade
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="bg-charcoal-light border-charcoal-medium">
+                <DialogContent className="bg-card border-border">
                   <DialogHeader>
                     <DialogTitle className="text-foreground">{editingGrade ? 'Edit Grade' : 'Add New Grade'}</DialogTitle>
                   </DialogHeader>
-                  
                   <div className="grid gap-4 py-4">
                     <div className="space-y-2">
                       <Label className="text-foreground">Name *</Label>
                       <Input
                         value={gradeForm.name}
                         onChange={(e) => setGradeForm({ ...gradeForm, name: e.target.value })}
-                        className="bg-charcoal border-charcoal-medium text-foreground"
+                        className="bg-background border-border text-foreground"
                         placeholder="304"
                       />
                     </div>
@@ -1201,49 +570,39 @@ const Admin = () => {
                       <Textarea
                         value={gradeForm.description}
                         onChange={(e) => setGradeForm({ ...gradeForm, description: e.target.value })}
-                        className="bg-charcoal border-charcoal-medium text-foreground"
+                        className="bg-background border-border text-foreground"
                       />
                     </div>
                   </div>
-                  
                   <div className="flex justify-end gap-3">
-                    <Button variant="outline" onClick={() => setGradeDialog(false)} className="border-charcoal-medium text-foreground">
-                      Cancel
-                    </Button>
-                    <Button onClick={saveGrade} className="btn-modern">
-                      {editingGrade ? 'Update' : 'Create'}
-                    </Button>
+                    <Button variant="outline" onClick={() => setGradeDialog(false)} className="border-border text-foreground">Cancel</Button>
+                    <Button onClick={saveGrade} className="btn-modern">{editingGrade ? 'Update' : 'Create'}</Button>
                   </div>
                 </DialogContent>
               </Dialog>
             </div>
-            
+
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {grades.map((grade) => (
-                <Card key={grade.id} className="bg-charcoal-light/50 border-charcoal-medium hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5">
+                <Card key={grade.id} className="bg-card/50 border-border hover:border-primary/30 transition-all hover:shadow-lg hover:shadow-primary/5">
                   <CardContent className="p-5">
                     <div className="text-center mb-4">
                       <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary/70 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg">
                         <span className="text-xl font-bold text-primary-foreground">{grade.name}</span>
                       </div>
                       <h3 className="font-semibold text-foreground">Grade {grade.name}</h3>
-                      {grade.description && (
-                        <p className="text-sm text-muted-foreground mt-1">{grade.description}</p>
-                      )}
+                      {grade.description && <p className="text-sm text-muted-foreground mt-1">{grade.description}</p>}
                     </div>
-                    <div className="flex justify-center gap-2 pt-4 border-t border-charcoal-medium">
+                    <div className="flex justify-center gap-2 pt-4 border-t border-border">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => {
                           setEditingGrade(grade);
-                          setGradeForm({
-                            name: grade.name,
-                            description: grade.description || '',
-                          });
+                          setGradeForm({ name: grade.name, description: grade.description || '' });
                           setGradeDialog(true);
                         }}
-                        className="border-charcoal-medium text-foreground hover:bg-charcoal-medium"
+                        className="border-border text-foreground hover:bg-muted"
                       >
                         <Pencil className="w-4 h-4" />
                       </Button>
