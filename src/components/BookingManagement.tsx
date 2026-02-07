@@ -308,7 +308,7 @@ const BookingManagement = () => {
                       </Button>
                     )}
                     <a 
-                      href={`https://wa.me/91${booking.customer_phone.replace(/\D/g, '')}?text=Hi ${booking.customer_name}, regarding your appointment on ${format(parseISO(booking.booking_date), 'MMM d')} at ${booking.booking_time}...`}
+                      href={`https://wa.me/${booking.customer_phone.replace(/\D/g, '').replace(/^0+/, '')}?text=Hi ${booking.customer_name}, regarding your appointment on ${format(parseISO(booking.booking_date), 'MMM d')} at ${booking.booking_time}...`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
