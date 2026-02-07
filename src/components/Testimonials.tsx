@@ -3,32 +3,46 @@ import { Star, ChevronLeft, ChevronRight, Quote, ExternalLink } from 'lucide-rea
 
 const testimonials = [
   {
-    name: 'Rajesh Patel',
-    role: 'Interior Designer, Vadodara',
-    content: 'AARTI ENTERPRISE has been my go-to supplier for all stainless steel requirements. Their designer sheets are of exceptional quality and the pricing is very competitive.',
+    name: 'Jayraj Thakor',
+    role: 'Verified Customer',
+    content: 'Best aluminium and glass railing also premium quality stainless steel available here.',
+    rating: 5,
+    timeAgo: 'Recently',
+  },
+  {
+    name: 'Welcom Hotel',
+    role: 'Business Client',
+    content: 'Premium Quality Steel Railing and Glass Railing most durable and modern style.',
+    rating: 5,
+    timeAgo: 'Recently',
+  },
+  {
+    name: 'Prakash Bishnoi',
+    role: 'Verified Customer',
+    content: 'Best quality steel sheet in Vadodara.',
+    rating: 5,
+    timeAgo: '2 weeks ago',
+  },
+  {
+    name: 'Samir Patel',
+    role: 'Verified Customer',
+    content: 'Best quality of premium Steel.',
+    rating: 5,
+    timeAgo: '3 weeks ago',
+  },
+  {
+    name: 'Yash Jani',
+    role: 'Verified Customer',
+    content: 'Best Quality Available Here.',
+    rating: 5,
+    timeAgo: '2 weeks ago',
+  },
+  {
+    name: 'Devendra Bishnoi',
+    role: 'Verified Customer',
+    content: 'Excellent service and top-notch quality products at AARTI ENTERPRISE. Highly recommended!',
     rating: 5,
     timeAgo: '2 months ago',
-  },
-  {
-    name: 'Mukesh Shah',
-    role: 'Builder & Contractor',
-    content: 'I have been purchasing SS pipes and railings from them for over 5 years. Always reliable stock and excellent customer service. Highly recommended!',
-    rating: 5,
-    timeAgo: '3 months ago',
-  },
-  {
-    name: 'Priya Sharma',
-    role: 'Architect, Ahmedabad',
-    content: 'The glass railing fittings from AARTI ENTERPRISE transformed our hotel lobby. Premium quality products at reasonable prices. Fast delivery too!',
-    rating: 5,
-    timeAgo: '1 month ago',
-  },
-  {
-    name: 'Sunil Agarwal',
-    role: 'Factory Owner',
-    content: 'Best wholesale prices for SS sheets in Gujarat. Their team is knowledgeable and helps select the right grade for each application.',
-    rating: 5,
-    timeAgo: '4 months ago',
   },
 ];
 
