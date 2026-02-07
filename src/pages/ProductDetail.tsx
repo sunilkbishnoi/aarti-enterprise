@@ -253,11 +253,11 @@ const ProductDetail = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button
                   size="lg"
                   onClick={handleAddToInquiry}
-                  className={`flex-1 gap-2 ${added ? 'bg-green-500 hover:bg-green-600' : 'bg-primary hover:bg-primary/90'}`}
+                  className={`flex-1 gap-2 h-12 text-base ${added ? 'bg-green-500 hover:bg-green-600' : 'bg-primary hover:bg-primary/90'}`}
                 >
                   {added ? (
                     <>
@@ -278,7 +278,7 @@ const ProductDetail = () => {
                   rel="noopener noreferrer"
                   className="flex-1"
                 >
-                  <Button size="lg" variant="outline" className="w-full gap-2 border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white">
+                  <Button size="lg" variant="outline" className="w-full gap-2 h-12 text-base border-[#25D366] text-[#25D366] hover:bg-[#25D366] hover:text-white">
                     <MessageCircle className="w-5 h-5" />
                     WhatsApp Inquiry
                   </Button>

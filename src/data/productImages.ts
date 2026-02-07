@@ -15,6 +15,15 @@ import glassSpider from '@/assets/products/glass-spider.jpg';
 import glassClamp from '@/assets/products/glass-clamp.jpg';
 import aluSliding from '@/assets/products/alu-sliding.jpg';
 import aluDoor from '@/assets/products/alu-door.jpg';
+import showerFrameless from '@/assets/products/shower-frameless.jpg';
+import showerSliding from '@/assets/products/shower-sliding.jpg';
+import showerPartition from '@/assets/products/shower-partition.jpg';
+import toughenedPanel from '@/assets/products/toughened-panel.jpg';
+import laminatedGlass from '@/assets/products/laminated-glass.jpg';
+import frostedGlass from '@/assets/products/frosted-glass.jpg';
+import ssMainGate from '@/assets/products/ss-main-gate.jpg';
+import ssWindowGrill from '@/assets/products/ss-window-grill.jpg';
+import ssBalconyGrill from '@/assets/products/ss-balcony-grill.jpg';
 
 // Map product slugs to their images
 export const productImages: Record<string, string> = {
@@ -34,6 +43,15 @@ export const productImages: Record<string, string> = {
   'glass-clamp': glassClamp,
   'alu-sliding': aluSliding,
   'alu-door': aluDoor,
+  'shower-frameless': showerFrameless,
+  'shower-sliding': showerSliding,
+  'shower-partition': showerPartition,
+  'toughened-panel': toughenedPanel,
+  'laminated-glass': laminatedGlass,
+  'frosted-glass': frostedGlass,
+  'ss-main-gate': ssMainGate,
+  'ss-window-grill': ssWindowGrill,
+  'ss-balcony-grill': ssBalconyGrill,
 };
 
 // Default fallback image
