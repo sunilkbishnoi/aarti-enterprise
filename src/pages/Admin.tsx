@@ -54,7 +54,7 @@ interface Product {
 }
 
 const Admin = () => {
-  const { user, isAdmin, loading, signOut } = useAuth();
+  const { user, isAdmin, loading, adminLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   
@@ -89,7 +89,7 @@ const Admin = () => {
   useEffect(() => {
     if (!loading && !user) {
       navigate('/admin/login');
-    } else if (!loading && user && !isAdmin) {
+    } else if (!loading && !adminLoading && user && !isAdmin) {
       toast({
         title: "Access Denied",
         description: "You don't have admin privileges.",
@@ -97,7 +97,7 @@ const Admin = () => {
       });
       navigate('/');
     }
-  }, [user, isAdmin, loading, navigate, toast]);
+  }, [user, isAdmin, loading, adminLoading, navigate, toast]);
 
   useEffect(() => {
     if (user && isAdmin) {
@@ -403,7 +403,7 @@ const Admin = () => {
     p.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading || isLoading) {
+  if (loading || adminLoading || isLoading) {
     return (
       <div className="min-h-screen bg-gradient-dark flex items-center justify-center">
         <div className="text-center">
