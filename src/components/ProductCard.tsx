@@ -134,33 +134,6 @@ const ProductCard = ({ product, compact = false, index = 0 }: ProductCardProps) 
             </div>
           </div>
 
-          {/* Bottom Action Bar */}
-          <div className={`absolute bottom-0 left-0 right-0 p-4 transition-all duration-500 ${
-            isHovered ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-          }`}>
-            <div className="flex items-center gap-2">
-              <a
-                href={`https://wa.me/919427055205?text=${whatsappMessage}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-[#25D366] hover:bg-[#128C7E] text-white text-sm font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>Send Inquiry</span>
-              </a>
-              <button
-                onClick={handleQuickAdd}
-                className={`p-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 ${
-                  added 
-                    ? 'bg-emerald-500 text-white' 
-                    : 'bg-white/95 text-charcoal hover:bg-primary hover:text-primary-foreground'
-                }`}
-              >
-                {added ? <Check className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Content Section */}
