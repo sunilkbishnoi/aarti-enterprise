@@ -236,22 +236,27 @@ const Booking = () => {
 
     // Send email notification
     try {
-      const emailPayload = {
-        booking_id: data?.booking_id || 'N/A',
-        customer_name: form.customer_name,
-        customer_phone: form.customer_phone,
-        customer_email: form.customer_email || undefined,
-        booking_date: format(selectedDate, 'EEEE, MMMM d, yyyy'),
-        booking_time: selectedTime,
-        purpose: form.purpose,
-        message: form.message || undefined
-      };
+      if (data?.booking_id) {
+        const emailPayload = {
+          booking_id: data.booking_id,
+          customer_name: sanitizedData.customer_name,
+          customer_phone: sanitizedData.customer_phone,
+          customer_email: sanitizedData.customer_email ?? undefined,
+          booking_date: format(selectedDate, 'EEEE, MMMM d, yyyy'),
+          booking_time: selectedTime,
+          purpose: sanitizedData.purpose,
+          message: sanitizedData.message ?? undefined,
+        };
 
-      await supabase.functions.invoke('send-booking-email', {
-        body: emailPayload
-      });
-      
-      console.log('Booking email sent successfully');
+        const { error: fnError } = await supabase.functions.invoke('send-booking-email', {
+          body: emailPayload,
+        });
+
+        if (fnError) throw fnError;
+        console.log('Booking email sent successfully');
+      } else {
+        console.warn('Booking created but booking_id missing; skipping email send');
+      }
     } catch (emailError) {
       console.error('Failed to send email notification:', emailError);
       // Don't fail the booking if email fails
