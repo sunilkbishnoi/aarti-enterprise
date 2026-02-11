@@ -93,6 +93,47 @@ export const productSpecs: Record<string, ProductSpecDetail> = {
       'Shopfront glazing',
     ],
   },
+  'ss-round-pipe': {
+    variants: [
+      { name: 'SS Round Pipe ½"', dimensions: '21.3 mm OD', price: 120, description: 'Small diameter pipe for light railing & furniture.' },
+      { name: 'SS Round Pipe ¾"', dimensions: '26.9 mm OD', price: 160, description: 'Common for baluster inserts & handrail supports.' },
+      { name: 'SS Round Pipe 1"', dimensions: '33.7 mm OD', price: 220, description: 'Popular for railings, handrails & decorative work.' },
+      { name: 'SS Round Pipe 1¼"', dimensions: '42.4 mm OD', price: 310, description: 'Standard railing post size for balcony & staircase.' },
+      { name: 'SS Round Pipe 1½"', dimensions: '48.3 mm OD', price: 380, description: 'Heavy-duty railing & structural applications.' },
+      { name: 'SS Round Pipe 2"', dimensions: '50.8 mm OD', price: 480, description: 'Structural columns, marine & industrial piping.' },
+      { name: 'SS Round Pipe 3"', dimensions: '88.9 mm OD', price: 850, description: 'Large structural & plumbing applications.' },
+      { name: 'SS Round Pipe 4"', dimensions: '101.6 mm OD', price: 1200, description: 'Heavy industrial piping & structural framework.' },
+    ],
+    materialGrades: [
+      { name: 'SS 304 / 304L', description: 'General purpose — architectural, railing, plumbing & industrial use.' },
+      { name: 'SS 316 / 316L', description: 'Superior corrosion resistance for outdoor, marine & corrosive environments.' },
+      { name: 'SS 202 / 201', description: 'Budget-friendly option with moderate corrosion resistance.' },
+      { name: 'Duplex (2205, 2507)', description: 'High strength for offshore, chemical plants & heavy-duty applications.' },
+    ],
+    finishes: [
+      { name: 'Mill Finish', description: 'Raw industrial finish, suitable for structural & hidden applications.' },
+      { name: 'Pickled', description: 'Chemically cleaned surface for industrial piping.' },
+      { name: 'Brushed / Satin', description: 'Subtle matte finish, hides fingerprints — ideal for railings.' },
+      { name: 'Polished (180# / 320# / 600#)', description: 'Progressive shine levels for architectural & decorative use.' },
+      { name: 'Mirror Finish', description: 'High-gloss reflective surface for premium installations.' },
+    ],
+    glassThickness: [],
+    mountTypes: [
+      { name: 'SCH 5 / 5S (Light)', description: 'Low pressure, decorative & railing applications.' },
+      { name: 'SCH 10 / 10S (Light-Medium)', description: 'Plumbing & general architectural use.' },
+      { name: 'SCH 40 / 40S (Medium)', description: 'Structural, moderate pressure applications.' },
+      { name: 'SCH 80 / 80S (Thick)', description: 'High load & pressure systems.' },
+      { name: 'SCH 160 / XXS (Extra Thick)', description: 'Heavy industrial & high-stress environments.' },
+    ],
+    applications: [
+      'Railings, balustrades & handrails',
+      'Plumbing & sanitary piping',
+      'Industrial & chemical plant piping',
+      'Marine & offshore structures',
+      'Structural columns & framework',
+      'Pergolas & architectural features',
+    ],
+  },
 };
 
 export const getProductSpecs = (slug: string): ProductSpecDetail | null => {

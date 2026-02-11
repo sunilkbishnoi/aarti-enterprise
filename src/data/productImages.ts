@@ -1,5 +1,8 @@
 // Product images mapping - Maps product slugs to their generated images
 import ssRoundPipe from '@/assets/products/ss-round-pipe.jpg';
+import ssRoundPipeCatalogue from '@/assets/products/ss-round-pipe-catalogue.png';
+import ssRoundPipePolished from '@/assets/products/ss-round-pipe-polished.png';
+import ssRoundPipeCloseup from '@/assets/products/ss-round-pipe-closeup.png';
 import ssSquarePipe from '@/assets/products/ss-square-pipe.jpg';
 import ssRectPipe from '@/assets/products/ss-rect-pipe.jpg';
 import ssOvalPipe from '@/assets/products/ss-oval-pipe.jpg';
@@ -75,6 +78,7 @@ export const productImages: Record<string, string> = {
 // Product gallery images (multiple images per product)
 export const productGalleryImages: Record<string, string[]> = {
   'glass-clamp': [glassClamp, glassClamp2, glassClamp3],
+  'ss-round-pipe': [ssRoundPipe, ssRoundPipeCatalogue, ssRoundPipePolished, ssRoundPipeCloseup],
 };
 
 // Default fallback image

@@ -331,13 +331,14 @@ const ProductDetail = () => {
           {(() => {
             const specs = getProductSpecs(product.slug || '');
             if (!specs) return null;
+            const isGlassProduct = specs.glassThickness.length > 0;
             return (
               <div className="mt-16 space-y-10">
                 {/* Variants Table */}
                 <div>
                   <h2 className="font-display text-2xl font-bold text-foreground mb-1 flex items-center gap-2">
                     <Ruler className="w-6 h-6 text-primary" />
-                    Standard Clamp Sizes & Shapes
+                    {isGlassProduct ? 'Standard Clamp Sizes & Shapes' : 'Available Sizes & Specifications'}
                   </h2>
                   <p className="text-sm text-muted-foreground mb-4">Available models with indicative pricing</p>
                   <div className="overflow-x-auto rounded-xl border border-border">
@@ -398,38 +399,42 @@ const ProductDetail = () => {
                   </div>
                 </div>
 
-                {/* Glass Thickness & Mount Types */}
+                {/* Thickness/Schedule & Mount/Schedule Types */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="rounded-xl border border-border p-6">
-                    <h3 className="font-display text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                      <Layers className="w-5 h-5 text-primary" />
-                      Glass Thickness Compatibility
-                    </h3>
-                    <div className="flex flex-wrap gap-2">
-                      {specs.glassThickness.map((t, i) => (
-                        <Badge key={i} variant="outline" className="border-primary/30 text-foreground px-3 py-1.5">{t}</Badge>
-                      ))}
+                  {isGlassProduct && specs.glassThickness.length > 0 && (
+                    <div className="rounded-xl border border-border p-6">
+                      <h3 className="font-display text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                        <Layers className="w-5 h-5 text-primary" />
+                        Glass Thickness Compatibility
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {specs.glassThickness.map((t, i) => (
+                          <Badge key={i} variant="outline" className="border-primary/30 text-foreground px-3 py-1.5">{t}</Badge>
+                        ))}
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-3">Most common range for railings and partitions.</p>
                     </div>
-                    <p className="text-sm text-muted-foreground mt-3">Most common range for railings and partitions. Some heavy-duty clamps support up to 12 mm and beyond.</p>
-                  </div>
+                  )}
 
-                  <div className="rounded-xl border border-border p-6">
-                    <h3 className="font-display text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                      <Wrench className="w-5 h-5 text-primary" />
-                      Mount Types
-                    </h3>
-                    <div className="space-y-2">
-                      {specs.mountTypes.map((m, i) => (
-                        <div key={i} className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                          <div>
-                            <span className="font-medium text-foreground">{m.name}</span>
-                            <span className="text-sm text-muted-foreground"> — {m.description}</span>
+                  {specs.mountTypes.length > 0 && (
+                    <div className="rounded-xl border border-border p-6">
+                      <h3 className="font-display text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                        <Wrench className="w-5 h-5 text-primary" />
+                        {isGlassProduct ? 'Mount Types' : 'Schedule / Wall Thickness'}
+                      </h3>
+                      <div className="space-y-2">
+                        {specs.mountTypes.map((m, i) => (
+                          <div key={i} className="flex items-start gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                            <div>
+                              <span className="font-medium text-foreground">{m.name}</span>
+                              <span className="text-sm text-muted-foreground"> — {m.description}</span>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
 
                 {/* Applications */}
