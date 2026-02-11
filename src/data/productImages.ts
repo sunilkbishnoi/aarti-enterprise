@@ -4,6 +4,9 @@ import ssRoundPipeCatalogue from '@/assets/products/ss-round-pipe-catalogue.png'
 import ssRoundPipePolished from '@/assets/products/ss-round-pipe-polished.png';
 import ssRoundPipeCloseup from '@/assets/products/ss-round-pipe-closeup.png';
 import ssSquarePipe from '@/assets/products/ss-square-pipe.jpg';
+import ssSquarePipePolished from '@/assets/products/ss-square-pipe-polished.png';
+import ssSquarePipeStack from '@/assets/products/ss-square-pipe-stack.jpg';
+import ssSquarePipeCloseup from '@/assets/products/ss-square-pipe-closeup.png';
 import ssRectPipe from '@/assets/products/ss-rect-pipe.jpg';
 import ssOvalPipe from '@/assets/products/ss-oval-pipe.jpg';
 import ssSheetPlain from '@/assets/products/ss-sheet-plain.jpg';
@@ -79,6 +82,7 @@ export const productImages: Record<string, string> = {
 export const productGalleryImages: Record<string, string[]> = {
   'glass-clamp': [glassClamp, glassClamp2, glassClamp3],
   'ss-round-pipe': [ssRoundPipe, ssRoundPipeCatalogue, ssRoundPipePolished, ssRoundPipeCloseup],
+  'ss-square-pipe': [ssSquarePipe, ssSquarePipePolished, ssSquarePipeStack, ssSquarePipeCloseup],
 };
 
 // Default fallback image
