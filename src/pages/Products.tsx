@@ -15,12 +15,37 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useProducts } from '@/hooks/useProducts';
 
+// Material groupings for organized display
+const materialGroups = [
+  {
+    id: 'stainless-steel',
+    title: 'Stainless Steel',
+    subtitle: 'Premium SS pipes, sheets, railings & gates',
+    icon: '🔩',
+    categorySlugs: ['ss-pipes', 'ss-sheets', 'designer-sheets', 'ss-railing', 'ss-gate-grills'],
+  },
+  {
+    id: 'glass',
+    title: 'Glass & Glazing',
+    subtitle: 'Railing fittings, toughened glass & shower enclosures',
+    icon: '🪟',
+    categorySlugs: ['glass-railing', 'toughened-glass', 'shower-enclosures'],
+  },
+  {
+    id: 'aluminium',
+    title: 'Aluminium',
+    subtitle: 'Window & door sections and profiles',
+    icon: '🏗️',
+    categorySlugs: ['aluminium'],
+  },
+];
+
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState('');
   const [gridSize, setGridSize] = useState<'small' | 'large'>('large');
   
-  const { products, categories, grades, isLoading, error } = useProducts();
+  const { products, categories, grades, rawCategories, isLoading, error } = useProducts();
   
   const selectedCategory = searchParams.get('category') || '';
   const selectedGrade = searchParams.get('grade') || '';
@@ -36,6 +61,33 @@ const Products = () => {
       return matchesCategory && matchesGrade && matchesSearch;
     });
   }, [products, selectedCategory, selectedGrade, search]);
+
+  // Group products by material sections
+  const groupedProducts = useMemo(() => {
+    if (selectedCategory) return null;
+    
+    return materialGroups.map(group => {
+      const groupCategoryIds = rawCategories
+        .filter(c => group.categorySlugs.includes(c.slug))
+        .map(c => c.id);
+      
+      const groupProducts = filteredProducts.filter(p => groupCategoryIds.includes(p.categoryId || ''));
+      
+      const subGroups = rawCategories
+        .filter(c => group.categorySlugs.includes(c.slug))
+        .map(cat => ({
+          category: cat,
+          products: groupProducts.filter(p => p.categoryId === cat.id),
+        }))
+        .filter(sg => sg.products.length > 0);
+      
+      return {
+        ...group,
+        subGroups,
+        totalCount: groupProducts.length,
+      };
+    }).filter(g => g.totalCount > 0);
+  }, [filteredProducts, rawCategories, selectedCategory]);
 
   const updateFilter = (key: string, value: string) => {
     if (value) {
@@ -59,6 +111,10 @@ const Products = () => {
   const categoryName = selectedCategory 
     ? (categories.find(c => c.id === selectedCategory)?.name || 'Products')
     : 'All Products';
+
+  const gridClasses = gridSize === 'large' 
+    ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+    : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5';
 
   return (
     <>
@@ -216,15 +272,11 @@ const Products = () => {
             </div>
           </div>
 
-          {/* Products Grid */}
+          {/* Products Content */}
           <div className="container mx-auto px-4 py-12">
-            {/* Loading State with Skeleton */}
+            {/* Loading State */}
             {isLoading && (
-              <div className={`grid gap-6 ${
-                gridSize === 'large' 
-                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-                  : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
-              }`}>
+              <div className={`grid gap-6 ${gridClasses}`}>
                 <ProductSkeleton count={8} compact={gridSize === 'small'} />
               </div>
             )}
@@ -243,7 +295,7 @@ const Products = () => {
               </div>
             )}
 
-            {/* Products Content */}
+            {/* Products Display */}
             {!isLoading && !error && (
               <>
                 {/* Results Count */}
@@ -258,24 +310,7 @@ const Products = () => {
                   </div>
                 </div>
 
-                {/* Products Grid */}
-                {filteredProducts.length > 0 ? (
-                  <div className={`grid gap-6 ${
-                    gridSize === 'large' 
-                      ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-                      : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
-                  }`}>
-                    {filteredProducts.map((product, index) => (
-                      <div 
-                        key={product.id} 
-                        className="animate-fade-up" 
-                        style={{ animationDelay: `${Math.min(index * 50, 500)}ms` }}
-                      >
-                        <ProductCard product={product} compact={gridSize === 'small'} />
-                      </div>
-                    ))}
-                  </div>
-                ) : (
+                {filteredProducts.length === 0 ? (
                   <div className="text-center py-20">
                     <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-muted flex items-center justify-center">
                       <Search className="w-8 h-8 text-muted-foreground" />
@@ -285,6 +320,75 @@ const Products = () => {
                     <Button onClick={clearFilters} className="btn-modern">
                       Clear All Filters
                     </Button>
+                  </div>
+                ) : groupedProducts && !selectedCategory ? (
+                  /* Material-grouped view */
+                  <div className="space-y-16">
+                    {groupedProducts.map((group) => (
+                      <section key={group.id} className="scroll-mt-32">
+                        {/* Material Group Header */}
+                        <div className="flex items-center gap-4 mb-8">
+                          <span className="text-3xl">{group.icon}</span>
+                          <div>
+                            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
+                              {group.title}
+                            </h2>
+                            <p className="text-muted-foreground text-sm mt-1">{group.subtitle}</p>
+                          </div>
+                          <div className="hidden sm:block ml-auto">
+                            <Badge variant="outline" className="text-sm px-3 py-1 rounded-lg border-primary/30 text-primary">
+                              {group.totalCount} {group.totalCount === 1 ? 'product' : 'products'}
+                            </Badge>
+                          </div>
+                        </div>
+
+                        {/* Sub-categories within material */}
+                        <div className="space-y-10">
+                          {group.subGroups.map((sub) => (
+                            <div key={sub.category.id}>
+                              {/* Sub-category label */}
+                              {group.subGroups.length > 1 && (
+                                <div className="flex items-center gap-3 mb-5">
+                                  <div className="h-px flex-1 max-w-[40px] bg-primary/40" />
+                                  <h3 className="text-sm font-semibold uppercase tracking-wider text-primary">
+                                    {sub.category.name}
+                                  </h3>
+                                  <div className="h-px flex-1 bg-border" />
+                                </div>
+                              )}
+                              
+                              <div className={`grid gap-6 ${gridClasses}`}>
+                                {sub.products.map((product, index) => (
+                                  <div 
+                                    key={product.id} 
+                                    className="animate-fade-up" 
+                                    style={{ animationDelay: `${Math.min(index * 50, 300)}ms` }}
+                                  >
+                                    <ProductCard product={product} compact={gridSize === 'small'} />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Divider between material groups */}
+                        <div className="mt-12 border-b border-border/50" />
+                      </section>
+                    ))}
+                  </div>
+                ) : (
+                  /* Flat grid when category is selected */
+                  <div className={`grid gap-6 ${gridClasses}`}>
+                    {filteredProducts.map((product, index) => (
+                      <div 
+                        key={product.id} 
+                        className="animate-fade-up" 
+                        style={{ animationDelay: `${Math.min(index * 50, 500)}ms` }}
+                      >
+                        <ProductCard product={product} compact={gridSize === 'small'} />
+                      </div>
+                    ))}
                   </div>
                 )}
               </>
