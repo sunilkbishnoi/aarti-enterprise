@@ -24,6 +24,14 @@ import frostedGlass from '@/assets/products/frosted-glass.jpg';
 import ssMainGate from '@/assets/products/ss-main-gate.jpg';
 import ssWindowGrill from '@/assets/products/ss-window-grill.jpg';
 import ssBalconyGrill from '@/assets/products/ss-balcony-grill.jpg';
+import glassUChannel from '@/assets/products/glass-u-channel.jpg';
+import glassTopRail from '@/assets/products/glass-top-rail.jpg';
+import glassCoverPlate from '@/assets/products/glass-cover-plate.jpg';
+import glassPatchFitting from '@/assets/products/glass-patch-fitting.jpg';
+import ssRailingBracket from '@/assets/products/ss-railing-bracket.jpg';
+import ssBasePlate from '@/assets/products/ss-base-plate.jpg';
+import ssElbowConnector from '@/assets/products/ss-elbow-connector.jpg';
+import ssEndCap from '@/assets/products/ss-end-cap.jpg';
 
 // Map product slugs to their images
 export const productImages: Record<string, string> = {
@@ -52,6 +60,14 @@ export const productImages: Record<string, string> = {
   'ss-main-gate': ssMainGate,
   'ss-window-grill': ssWindowGrill,
   'ss-balcony-grill': ssBalconyGrill,
+  'glass-u-channel': glassUChannel,
+  'glass-top-rail': glassTopRail,
+  'glass-cover-plate': glassCoverPlate,
+  'glass-patch-fitting': glassPatchFitting,
+  'ss-railing-bracket': ssRailingBracket,
+  'ss-base-plate': ssBasePlate,
+  'ss-elbow-connector': ssElbowConnector,
+  'ss-end-cap': ssEndCap,
 };
 
 // Default fallback image
