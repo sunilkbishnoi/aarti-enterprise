@@ -246,15 +246,22 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
-    await sendEmail(
-      [data.customer_email],
-      `Inquiry Received - ${inquiryId} | AARTI ENTERPRISE`,
-      customerHtml
-    );
-    console.log("Customer inquiry email sent");
+    // Try sending customer email - may fail on free Resend tier (unverified domain)
+    let customerEmailSent = false;
+    try {
+      await sendEmail(
+        [data.customer_email],
+        `Inquiry Received - ${inquiryId} | AARTI ENTERPRISE`,
+        customerHtml
+      );
+      customerEmailSent = true;
+      console.log("Customer inquiry email sent");
+    } catch (emailErr: any) {
+      console.warn("Customer email failed (likely Resend domain restriction):", emailErr.message);
+    }
 
     return new Response(
-      JSON.stringify({ success: true, inquiry_id: inquiryId }),
+      JSON.stringify({ success: true, inquiry_id: inquiryId, customer_email_sent: customerEmailSent }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   } catch (error: any) {
