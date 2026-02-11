@@ -639,191 +639,232 @@ const AdminProductManagement = ({ products, categories, onRefresh }: AdminProduc
           </CardContent>
         </Card>
       ) : (
-        <div className="bg-card/30 rounded-xl border border-border overflow-hidden">
-          {/* Table Header */}
-          <div className="hidden md:grid md:grid-cols-[40px_80px_1fr_130px_110px_90px_80px_100px] gap-3 p-3 bg-muted/30 border-b border-border text-xs font-medium text-muted-foreground uppercase tracking-wider">
-            <div className="flex items-center justify-center">
-              <Checkbox
-                checked={allSelected}
-                onCheckedChange={toggleSelectAll}
-              />
-            </div>
-            <div>Image</div>
-            <div>Product</div>
-            <div>Category</div>
-            <div>Price</div>
-            <div className="text-center">Stock</div>
-            <div className="text-center">★</div>
-            <div className="text-right">Actions</div>
-          </div>
+        <div className="space-y-6">
+          {/* Group products by category */}
+          {(() => {
+            // Build grouped structure
+            const grouped: { category: { id: string; name: string }; products: typeof filteredProducts }[] = [];
+            const categoryMap = new Map<string, typeof filteredProducts>();
+            
+            filteredProducts.forEach(p => {
+              const catId = p.category_id || '__uncategorized__';
+              if (!categoryMap.has(catId)) categoryMap.set(catId, []);
+              categoryMap.get(catId)!.push(p);
+            });
 
-          {/* Rows */}
-          {filteredProducts.map((product, index) => (
-            <div
-              key={product.id}
-              className={`flex flex-col md:grid md:grid-cols-[40px_80px_1fr_130px_110px_90px_80px_100px] gap-2 md:gap-3 p-3 items-start md:items-center hover:bg-muted/10 transition-colors ${
-                index !== filteredProducts.length - 1 ? 'border-b border-border/50' : ''
-              } ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}
-            >
-              {/* Mobile top row: checkbox + image + name + actions */}
-              <div className="flex items-center gap-3 w-full md:contents">
-                {/* Checkbox */}
-                <div className="flex items-center justify-center">
-                  <Checkbox
-                    checked={selectedIds.has(product.id)}
-                    onCheckedChange={() => toggleSelect(product.id)}
-                  />
-                </div>
+            // Sort categories by the order they appear in the categories array
+            const sortedCatIds = [...categoryMap.keys()].sort((a, b) => {
+              const aIdx = categories.findIndex(c => c.id === a);
+              const bIdx = categories.findIndex(c => c.id === b);
+              return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
+            });
 
-                {/* Image - click to change */}
-                <div className="relative group cursor-pointer flex-shrink-0">
-                  <Label className="cursor-pointer">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (!file) return;
-                        const url = await handleImageUpload(file);
-                        if (url) {
-                          const newImages = [...(product.images || []), url];
-                          await supabase.from('products').update({ image_url: url, images: newImages }).eq('id', product.id);
-                          onRefresh();
-                          toast({ title: "Image Updated", description: "Product image changed" });
-                        }
-                      }}
-                    />
-                    {product.image_url ? (
-                      <div className="relative">
-                        <img src={product.image_url} alt={product.name} className="w-12 h-12 md:w-14 md:h-14 object-cover rounded-lg" />
-                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                          <Upload className="w-4 h-4 text-white" />
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="w-12 h-12 md:w-14 md:h-14 bg-muted rounded-lg flex items-center justify-center hover:bg-muted/80 transition-colors">
-                        <Upload className="w-5 h-5 text-muted-foreground" />
-                      </div>
-                    )}
-                  </Label>
-                  {product.images && product.images.length > 1 && (
-                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full text-[9px] font-bold text-primary-foreground flex items-center justify-center">
-                      {product.images.length}
-                    </span>
-                  )}
-                </div>
+            sortedCatIds.forEach(catId => {
+              const cat = categories.find(c => c.id === catId);
+              grouped.push({
+                category: cat ? { id: cat.id, name: cat.name } : { id: '__uncategorized__', name: 'Uncategorized' },
+                products: categoryMap.get(catId)!,
+              });
+            });
 
-                {/* Product Details */}
-                <div className="min-w-0 flex-1">
-                  <h3 className="font-semibold text-foreground text-sm truncate">{product.name}</h3>
-                  <p className="text-xs text-muted-foreground truncate">{product.description || 'No description'}</p>
-                  <div className="flex flex-wrap gap-1 mt-1">
-                    {product.sizes.slice(0, 3).map((size, i) => (
-                      <Badge key={i} variant="outline" className="text-[10px] px-1.5 py-0 border-border text-muted-foreground">
-                        {size}
-                      </Badge>
-                    ))}
-                    {product.sizes.length > 3 && (
-                      <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-border text-muted-foreground">
-                        +{product.sizes.length - 3}
-                      </Badge>
-                    )}
+            return grouped.map((group) => (
+              <div key={group.category.id} className="bg-card/30 rounded-xl border border-border overflow-hidden">
+                {/* Category Header */}
+                <div className="flex items-center justify-between p-3 bg-muted/40 border-b border-border">
+                  <div className="flex items-center gap-3">
+                    <Layers className="w-4 h-4 text-primary" />
+                    <h3 className="font-semibold text-foreground text-sm">{group.category.name}</h3>
+                    <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">
+                      {group.products.length}
+                    </Badge>
                   </div>
                 </div>
 
-                {/* Actions - visible on mobile in top row */}
-                <div className="flex items-center gap-1.5 md:hidden flex-shrink-0">
-                  <Button variant="outline" size="sm" onClick={() => openEditDialog(product)} className="border-border text-foreground hover:bg-muted h-7 w-7 p-0">
-                    <Pencil className="w-3.5 h-3.5" />
-                  </Button>
-                  <Button variant="destructive" size="sm" onClick={() => deleteProduct(product.id)} className="h-7 w-7 p-0">
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </Button>
+                {/* Table Header */}
+                <div className="hidden md:grid md:grid-cols-[40px_80px_1fr_110px_90px_80px_100px] gap-3 p-3 bg-muted/20 border-b border-border/50 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <div className="flex items-center justify-center">
+                    <Checkbox
+                      checked={group.products.every(p => selectedIds.has(p.id))}
+                      onCheckedChange={() => {
+                        const allInGroup = group.products.every(p => selectedIds.has(p.id));
+                        const newSet = new Set(selectedIds);
+                        group.products.forEach(p => allInGroup ? newSet.delete(p.id) : newSet.add(p.id));
+                        setSelectedIds(newSet);
+                      }}
+                    />
+                  </div>
+                  <div>Image</div>
+                  <div>Product</div>
+                  <div>Price</div>
+                  <div className="text-center">Stock</div>
+                  <div className="text-center">★</div>
+                  <div className="text-right">Actions</div>
                 </div>
-              </div>
 
-              {/* Mobile bottom row: category, price, stock, featured */}
-              <div className="flex items-center gap-2 flex-wrap pl-[calc(1rem+12px+48px)] md:pl-0 md:contents w-full">
-                {/* Category */}
-                <Badge variant="secondary" className="text-xs">
-                  {getCategoryName(product.category_id)}
-                </Badge>
+                {/* Product Rows */}
+                {group.products.map((product, index) => (
+                  <div
+                    key={product.id}
+                    className={`flex flex-col md:grid md:grid-cols-[40px_80px_1fr_110px_90px_80px_100px] gap-2 md:gap-3 p-3 items-start md:items-center hover:bg-muted/10 transition-colors ${
+                      index !== group.products.length - 1 ? 'border-b border-border/30' : ''
+                    } ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}
+                  >
+                    {/* Mobile top row: checkbox + image + name + actions */}
+                    <div className="flex items-center gap-3 w-full md:contents">
+                      <div className="flex items-center justify-center">
+                        <Checkbox
+                          checked={selectedIds.has(product.id)}
+                          onCheckedChange={() => toggleSelect(product.id)}
+                        />
+                      </div>
 
-                {/* Price */}
-                <div className="flex items-center gap-1">
-                  {editingPriceId === product.id ? (
-                    <div className="flex items-center gap-1">
-                      <Input
-                        type="number"
-                        value={tempPrice}
-                        onChange={(e) => setTempPrice(Number(e.target.value))}
-                        className="w-20 h-7 text-xs bg-background border-primary text-foreground"
-                        autoFocus
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') savePriceEdit();
-                          if (e.key === 'Escape') cancelPriceEdit();
-                        }}
-                      />
-                      <Button size="icon" variant="ghost" onClick={savePriceEdit} className="h-6 w-6 text-emerald-400">
-                        <Check className="w-3 h-3" />
+                      {/* Image */}
+                      <div className="relative group cursor-pointer flex-shrink-0">
+                        <Label className="cursor-pointer">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              const url = await handleImageUpload(file);
+                              if (url) {
+                                const newImages = [...(product.images || []), url];
+                                await supabase.from('products').update({ image_url: url, images: newImages }).eq('id', product.id);
+                                onRefresh();
+                                toast({ title: "Image Updated", description: "Product image changed" });
+                              }
+                            }}
+                          />
+                          {product.image_url ? (
+                            <div className="relative">
+                              <img src={product.image_url} alt={product.name} className="w-12 h-12 md:w-14 md:h-14 object-cover rounded-lg" />
+                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
+                                <Upload className="w-4 h-4 text-white" />
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="w-12 h-12 md:w-14 md:h-14 bg-muted rounded-lg flex items-center justify-center hover:bg-muted/80 transition-colors">
+                              <Upload className="w-5 h-5 text-muted-foreground" />
+                            </div>
+                          )}
+                        </Label>
+                        {product.images && product.images.length > 1 && (
+                          <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full text-[9px] font-bold text-primary-foreground flex items-center justify-center">
+                            {product.images.length}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Product Details */}
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-semibold text-foreground text-sm truncate">{product.name}</h3>
+                        <p className="text-xs text-muted-foreground truncate">{product.description || 'No description'}</p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {product.sizes.slice(0, 3).map((size, i) => (
+                            <Badge key={i} variant="outline" className="text-[10px] px-1.5 py-0 border-border text-muted-foreground">
+                              {size}
+                            </Badge>
+                          ))}
+                          {product.sizes.length > 3 && (
+                            <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-border text-muted-foreground">
+                              +{product.sizes.length - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Actions - mobile */}
+                      <div className="flex items-center gap-1.5 md:hidden flex-shrink-0">
+                        <Button variant="outline" size="sm" onClick={() => openEditDialog(product)} className="border-border text-foreground hover:bg-muted h-7 w-7 p-0">
+                          <Pencil className="w-3.5 h-3.5" />
+                        </Button>
+                        <Button variant="destructive" size="sm" onClick={() => deleteProduct(product.id)} className="h-7 w-7 p-0">
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Mobile bottom row */}
+                    <div className="flex items-center gap-2 flex-wrap pl-[calc(1rem+12px+48px)] md:pl-0 md:contents w-full">
+                      {/* Price */}
+                      <div className="flex items-center gap-1">
+                        {editingPriceId === product.id ? (
+                          <div className="flex items-center gap-1">
+                            <Input
+                              type="number"
+                              value={tempPrice}
+                              onChange={(e) => setTempPrice(Number(e.target.value))}
+                              className="w-20 h-7 text-xs bg-background border-primary text-foreground"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') savePriceEdit();
+                                if (e.key === 'Escape') cancelPriceEdit();
+                              }}
+                            />
+                            <Button size="icon" variant="ghost" onClick={savePriceEdit} className="h-6 w-6 text-emerald-400">
+                              <Check className="w-3 h-3" />
+                            </Button>
+                            <Button size="icon" variant="ghost" onClick={cancelPriceEdit} className="h-6 w-6 text-destructive">
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => startPriceEdit(product)}
+                            className="flex items-center gap-0.5 px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary rounded-md transition-colors group text-xs sm:text-sm"
+                          >
+                            <IndianRupee className="w-3 h-3" />
+                            <span className="font-semibold">{product.base_price.toLocaleString()}</span>
+                            <Pencil className="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity ml-0.5" />
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Stock */}
+                      <div className="flex md:justify-center">
+                        <button
+                          onClick={() => toggleStock(product)}
+                          className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${
+                            product.in_stock
+                              ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                              : 'bg-destructive/20 text-destructive hover:bg-destructive/30'
+                          }`}
+                        >
+                          {product.in_stock ? 'In Stock' : 'Out'}
+                        </button>
+                      </div>
+
+                      {/* Featured */}
+                      <div className="flex md:justify-center">
+                        <button
+                          onClick={() => toggleFeatured(product)}
+                          className={`p-1 rounded-lg transition-colors ${
+                            product.is_featured
+                              ? 'bg-primary/20 text-primary'
+                              : 'bg-muted text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          <Star className={`w-3.5 h-3.5 ${product.is_featured ? 'fill-primary' : ''}`} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Actions - desktop */}
+                    <div className="hidden md:flex items-center justify-end gap-1.5">
+                      <Button variant="outline" size="sm" onClick={() => openEditDialog(product)} className="border-border text-foreground hover:bg-muted h-7 w-7 p-0">
+                        <Pencil className="w-3.5 h-3.5" />
                       </Button>
-                      <Button size="icon" variant="ghost" onClick={cancelPriceEdit} className="h-6 w-6 text-destructive">
-                        <X className="w-3 h-3" />
+                      <Button variant="destructive" size="sm" onClick={() => deleteProduct(product.id)} className="h-7 w-7 p-0">
+                        <Trash2 className="w-3.5 h-3.5" />
                       </Button>
                     </div>
-                  ) : (
-                    <button
-                      onClick={() => startPriceEdit(product)}
-                      className="flex items-center gap-0.5 px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary rounded-md transition-colors group text-xs sm:text-sm"
-                    >
-                      <IndianRupee className="w-3 h-3" />
-                      <span className="font-semibold">{product.base_price.toLocaleString()}</span>
-                      <Pencil className="w-2.5 h-2.5 opacity-0 group-hover:opacity-100 transition-opacity ml-0.5" />
-                    </button>
-                  )}
-                </div>
-
-                {/* Stock */}
-                <div className="flex md:justify-center">
-                  <button
-                    onClick={() => toggleStock(product)}
-                    className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${
-                      product.in_stock
-                        ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
-                        : 'bg-destructive/20 text-destructive hover:bg-destructive/30'
-                    }`}
-                  >
-                    {product.in_stock ? 'In Stock' : 'Out'}
-                  </button>
-                </div>
-
-                {/* Featured */}
-                <div className="flex md:justify-center">
-                  <button
-                    onClick={() => toggleFeatured(product)}
-                    className={`p-1 rounded-lg transition-colors ${
-                      product.is_featured
-                        ? 'bg-primary/20 text-primary'
-                        : 'bg-muted text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    <Star className={`w-3.5 h-3.5 ${product.is_featured ? 'fill-primary' : ''}`} />
-                  </button>
-                </div>
+                  </div>
+                ))}
               </div>
-
-              {/* Actions - desktop only (mobile actions are in top row) */}
-              <div className="hidden md:flex items-center justify-end gap-1.5">
-                <Button variant="outline" size="sm" onClick={() => openEditDialog(product)} className="border-border text-foreground hover:bg-muted h-7 w-7 p-0">
-                  <Pencil className="w-3.5 h-3.5" />
-                </Button>
-                <Button variant="destructive" size="sm" onClick={() => deleteProduct(product.id)} className="h-7 w-7 p-0">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </Button>
-              </div>
-            </div>
-          ))}
+            ));
+          })()}
         </div>
       )}
     </div>
