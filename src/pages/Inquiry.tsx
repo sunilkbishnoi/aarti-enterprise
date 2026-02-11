@@ -150,21 +150,24 @@ const Inquiry = () => {
                   * This is an approximate value. Final quotation will be provided based on current rates.
                 </p>
 
-                <div className="space-y-3">
+                <div className="flex flex-col gap-3">
                   <a
                     href={`https://wa.me/919427055205?text=${getWhatsAppMessage()}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block"
                   >
-                    <Button className="w-full gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white">
+                    <Button className="w-full gap-2 h-12 text-base bg-[#25D366] hover:bg-[#128C7E] text-white">
                       <MessageCircle className="w-5 h-5" />
                       Send on WhatsApp
                     </Button>
                   </a>
 
-                  <a href={`mailto:aartienterprise05@gmail.com?subject=Product Inquiry&body=${decodeURIComponent(getWhatsAppMessage())}`}>
-                    <Button variant="outline" className="w-full gap-2">
+                  <a
+                    href={`mailto:aartienterprise05@gmail.com?subject=Product Inquiry&body=${encodeURIComponent(decodeURIComponent(getWhatsAppMessage()))}`}
+                    className="block"
+                  >
+                    <Button variant="outline" className="w-full gap-2 h-12 text-base border-primary text-primary hover:bg-primary hover:text-primary-foreground">
                       <Mail className="w-5 h-5" />
                       Send Email
                     </Button>
