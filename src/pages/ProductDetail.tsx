@@ -27,8 +27,11 @@ const ProductDetail = () => {
   const [selectedGrade, setSelectedGrade] = useState('');
   const [selectedSize, setSelectedSize] = useState('');
   const [selectedThickness, setSelectedThickness] = useState('');
+  const [selectedFinish, setSelectedFinish] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+
+  const specs = product ? getProductSpecs(product.slug || '') : null;
 
   // Set defaults once product loads
   if (product && !selectedGrade && product.grades.length > 0) {
@@ -39,6 +42,9 @@ const ProductDetail = () => {
   }
   if (product && !selectedThickness && product.thicknesses.length > 0) {
     setSelectedThickness(product.thicknesses[0]);
+  }
+  if (specs && !selectedFinish && specs.finishes.length > 0) {
+    setSelectedFinish(specs.finishes[0].name);
   }
 
   if (isLoading) {
@@ -76,18 +82,28 @@ const ProductDetail = () => {
     );
   }
 
-  const price = Math.round(product.basePrice * (product.priceMultiplier[selectedGrade] || 1));
-  const totalPrice = price * quantity;
+  // Get variant-specific price if specs available
+  const variantPrice = specs?.variants.find(v => {
+    const sizeKey = selectedSize?.replace('mm ', '').trim();
+    return v.dimensions.includes(sizeKey) || v.name.toLowerCase().includes(sizeKey.toLowerCase());
+  })?.price;
+
+  const price = variantPrice || Math.round(product.basePrice * (product.priceMultiplier[selectedGrade] || 1));
+  const gradeMultipliedPrice = specs 
+    ? Math.round(price * (selectedGrade === '316' ? 1.3 : 1))
+    : price;
+  const totalPrice = gradeMultipliedPrice * quantity;
 
   const handleAddToInquiry = () => {
+    const finishText = selectedFinish ? ` | Finish: ${selectedFinish}` : '';
     addItem({
       productId: product.id,
       productName: product.name,
       grade: selectedGrade,
       size: selectedSize,
-      thickness: selectedThickness,
+      thickness: selectedThickness + finishText,
       quantity,
-      price,
+      price: gradeMultipliedPrice,
     });
 
     setAdded(true);
@@ -100,7 +116,7 @@ const ProductDetail = () => {
   };
 
   const whatsappMessage = encodeURIComponent(
-    `Hello AARTI ENTERPRISE,\n\nI'm interested in:\n*${product.name}*\nGrade: ${selectedGrade}\nSize: ${selectedSize}\nThickness: ${selectedThickness}\nQuantity: ${quantity} pcs\n\nPlease provide the best quotation.\n\nThank you!`
+    `Hello AARTI ENTERPRISE,\n\nI'm interested in:\n*${product.name}*\nGrade: ${selectedGrade}\nSize: ${selectedSize}\nGlass Thickness: ${selectedThickness}${selectedFinish ? `\nFinish: ${selectedFinish}` : ''}\nQuantity: ${quantity} pcs\n\nPlease provide the best quotation.\n\nThank you!`
   );
 
   return (
@@ -175,7 +191,7 @@ const ProductDetail = () => {
                 {product.sizes.length > 0 && (
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Select Size
+                      {specs ? 'Select Clamp Size' : 'Select Size'}
                     </label>
                     <Select value={selectedSize} onValueChange={setSelectedSize}>
                       <SelectTrigger>
@@ -196,7 +212,7 @@ const ProductDetail = () => {
                 {product.thicknesses.length > 0 && (
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
-                      Select Thickness
+                      {specs ? 'Glass Thickness' : 'Select Thickness'}
                     </label>
                     <Select value={selectedThickness} onValueChange={setSelectedThickness}>
                       <SelectTrigger>
@@ -206,6 +222,27 @@ const ProductDetail = () => {
                         {product.thicknesses.map((thickness) => (
                           <SelectItem key={thickness} value={thickness}>
                             {thickness}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Finish Selection (for products with specs) */}
+                {specs && specs.finishes.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Select Finish
+                    </label>
+                    <Select value={selectedFinish} onValueChange={setSelectedFinish}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select finish" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {specs.finishes.map((finish) => (
+                          <SelectItem key={finish.name} value={finish.name}>
+                            {finish.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -242,7 +279,7 @@ const ProductDetail = () => {
               <div className="bg-muted/50 rounded-xl p-6 mb-8">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-muted-foreground">Price per piece</span>
-                  <span className="text-lg font-medium">₹{price.toLocaleString('en-IN')}</span>
+                  <span className="text-lg font-medium">₹{gradeMultipliedPrice.toLocaleString('en-IN')}</span>
                 </div>
                 <div className="flex justify-between items-center border-t border-border pt-4">
                   <span className="font-medium">Total (approx.)</span>
