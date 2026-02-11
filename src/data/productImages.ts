@@ -13,6 +13,8 @@ import ssBaluster from '@/assets/products/ss-baluster.jpg';
 import ssHandrail from '@/assets/products/ss-handrail.jpg';
 import glassSpider from '@/assets/products/glass-spider.jpg';
 import glassClamp from '@/assets/products/glass-clamp.jpg';
+import glassClamp2 from '@/assets/products/glass-clamp-2.jpg';
+import glassClamp3 from '@/assets/products/glass-clamp-3.jpg';
 import aluSliding from '@/assets/products/alu-sliding.jpg';
 import aluDoor from '@/assets/products/alu-door.jpg';
 import showerFrameless from '@/assets/products/shower-frameless.jpg';
@@ -70,10 +72,20 @@ export const productImages: Record<string, string> = {
   'ss-end-cap': ssEndCap,
 };
 
+// Product gallery images (multiple images per product)
+export const productGalleryImages: Record<string, string[]> = {
+  'glass-clamp': [glassClamp, glassClamp2, glassClamp3],
+};
+
 // Default fallback image
 export const defaultProductImage = ssRoundPipe;
 
 // Get image for a product by slug
 export const getProductImage = (slug: string): string => {
   return productImages[slug] || defaultProductImage;
+};
+
+// Get all gallery images for a product
+export const getProductGalleryImages = (slug: string): string[] => {
+  return productGalleryImages[slug] || [getProductImage(slug)];
 };
