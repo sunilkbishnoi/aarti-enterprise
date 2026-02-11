@@ -292,23 +292,26 @@ const ProductDetail = () => {
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  size="lg"
-                  onClick={handleAddToInquiry}
-                  className={`flex-1 w-full gap-2 h-12 text-base ${added ? 'bg-green-500 hover:bg-green-600' : 'bg-primary hover:bg-primary/90'}`}
-                >
-                  {added ? (
-                    <>
-                      <Check className="w-5 h-5" />
-                      Added to Inquiry
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingBag className="w-5 h-5" />
-                      Add to Inquiry
-                    </>
-                  )}
-                </Button>
+                <div className="flex-1">
+                  <Button
+                    size="lg"
+                    onClick={handleAddToInquiry}
+                    variant="outline"
+                    className={`w-full gap-2 h-12 text-base ${added ? 'border-green-500 bg-green-500 text-white hover:bg-green-600' : 'border-primary text-primary hover:bg-primary hover:text-primary-foreground'}`}
+                  >
+                    {added ? (
+                      <>
+                        <Check className="w-5 h-5" />
+                        Added to Inquiry
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag className="w-5 h-5" />
+                        Add to Inquiry
+                      </>
+                    )}
+                  </Button>
+                </div>
                 
                 <a
                   href={`https://wa.me/919427055205?text=${whatsappMessage}`}
