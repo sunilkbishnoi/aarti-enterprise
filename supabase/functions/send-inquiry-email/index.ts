@@ -42,7 +42,7 @@ async function sendEmail(to: string[], subject: string, html: string) {
       Authorization: `Bearer ${RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: "AARTI ENTERPRISE <onboarding@resend.dev>",
+      from: "AARTI ENTERPRISE <info@aartienterprise.site>",
       to,
       subject,
       html,
@@ -246,22 +246,15 @@ const handler = async (req: Request): Promise<Response> => {
       </html>
     `;
 
-    // Try sending customer email - may fail on free Resend tier (unverified domain)
-    let customerEmailSent = false;
-    try {
-      await sendEmail(
-        [data.customer_email],
-        `Inquiry Received - ${inquiryId} | AARTI ENTERPRISE`,
-        customerHtml
-      );
-      customerEmailSent = true;
-      console.log("Customer inquiry email sent");
-    } catch (emailErr: any) {
-      console.warn("Customer email failed (likely Resend domain restriction):", emailErr.message);
-    }
+    await sendEmail(
+      [data.customer_email],
+      `Inquiry Received - ${inquiryId} | AARTI ENTERPRISE`,
+      customerHtml
+    );
+    console.log("Customer inquiry email sent");
 
     return new Response(
-      JSON.stringify({ success: true, inquiry_id: inquiryId, customer_email_sent: customerEmailSent }),
+      JSON.stringify({ success: true, inquiry_id: inquiryId }),
       { status: 200, headers: { "Content-Type": "application/json", ...corsHeaders } }
     );
   } catch (error: any) {
