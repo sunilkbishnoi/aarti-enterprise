@@ -37,7 +37,7 @@ async function sendEmail(to: string[], subject: string, html: string) {
       Authorization: `Bearer ${RESEND_API_KEY}`,
     },
     body: JSON.stringify({
-      from: "AARTI ENTERPRISE <onboarding@resend.dev>",
+      from: "AARTI ENTERPRISE <info@aartienterprise.site>",
       to,
       subject,
       html,
@@ -156,7 +156,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Admin email sent successfully");
 
     let customerEmailResponse = null;
-    if (bookingData.customer_email && bookingData.customer_email === "sunilbishnoi6530@gmail.com") {
+    if (bookingData.customer_email) {
       const customerEmailHtml = `
         <!DOCTYPE html>
         <html>
