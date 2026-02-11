@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { X, Search, Sparkles, Grid3X3, LayoutGrid } from 'lucide-react';
+import { X, Search, Sparkles, Grid3X3, LayoutGrid, CircleDot, GlassWater, Layers } from 'lucide-react';
 import TopBar from '@/components/TopBar';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -21,21 +21,21 @@ const materialGroups = [
     id: 'stainless-steel',
     title: 'Stainless Steel',
     subtitle: 'Premium SS pipes, sheets, railings & gates',
-    icon: '🔩',
+    icon: CircleDot,
     categorySlugs: ['ss-pipes', 'ss-sheets', 'designer-sheets', 'ss-railing', 'ss-gate-grills'],
   },
   {
     id: 'glass',
     title: 'Glass & Glazing',
     subtitle: 'Railing fittings, toughened glass & shower enclosures',
-    icon: '🪟',
+    icon: GlassWater,
     categorySlugs: ['glass-railing', 'toughened-glass', 'shower-enclosures'],
   },
   {
     id: 'aluminium',
     title: 'Aluminium',
     subtitle: 'Window & door sections and profiles',
-    icon: '🏗️',
+    icon: Layers,
     categorySlugs: ['aluminium'],
   },
 ];
@@ -328,7 +328,9 @@ const Products = () => {
                       <section key={group.id} className="scroll-mt-32">
                         {/* Material Group Header */}
                         <div className="flex items-center gap-4 mb-8">
-                          <span className="text-3xl">{group.icon}</span>
+                          <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                            <group.icon className="w-6 h-6 text-primary" />
+                          </div>
                           <div>
                             <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground">
                               {group.title}
