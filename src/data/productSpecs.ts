@@ -134,6 +134,47 @@ export const productSpecs: Record<string, ProductSpecDetail> = {
       'Pergolas & architectural features',
     ],
   },
+  'ss-square-pipe': {
+    variants: [
+      { name: 'SS Square Tube 20×20 mm (Polished)', dimensions: '20 × 20 mm', price: 5288, description: 'Compact polished SS square tube for structural detail or decorative elements.' },
+      { name: 'JSLA SS304 Square Tube 1.2 mm', dimensions: 'Standard', price: 1183, description: 'SS304 tube with 1.2 mm wall; versatile for interior and exterior uses.' },
+      { name: 'SS Square Tube 25×25×1.5 mm', dimensions: '25 × 25 mm', price: 11300, description: 'Polished finish suitable for framing or railing components.' },
+      { name: 'SS Square Tube 30×30×1 mm', dimensions: '30 × 30 mm', price: 13800, description: 'Mid-size polished SS tube for furniture & construction accents.' },
+      { name: '304 SS Square Tube (Mill)', dimensions: 'Standard', price: 10387, description: 'SS304 with mill finish for fabrication or machining tasks.' },
+      { name: '316 Marine Grade Square Tube', dimensions: 'Standard', price: 18450, description: 'SS316 grade for marine or coastal environments with enhanced corrosion resistance.' },
+      { name: 'Large SS304 Square Tube (Industrial)', dimensions: 'Large', price: 42323, description: 'Larger dimension SS304 square tube for structural frameworks.' },
+      { name: '304 SS Square Tube Bright Surface', dimensions: 'Standard', price: 15030, description: 'Premium bright finish SS304 – ideal for architectural features.' },
+    ],
+    materialGrades: [
+      { name: 'SS 304 / 304L / 304H', description: 'General corrosion resistance, widely used for architectural & structural.' },
+      { name: 'SS 316 / 316L / 316Ti', description: 'Better resistance for marine, coastal & chemical environments.' },
+      { name: 'SS 202 / 201', description: 'Budget-friendly with moderate corrosion resistance.' },
+      { name: 'Other (317L, 321, 347, 904L, 430)', description: 'Specialized grades for specific industrial requirements.' },
+    ],
+    finishes: [
+      { name: 'Mill Finish', description: 'Raw industrial surface for fabrication & hidden structural use.' },
+      { name: 'Brushed / 2B', description: 'Subtle matte finish, fingerprint-resistant — ideal for railings & gates.' },
+      { name: 'Polished (#120–600 grit)', description: 'Progressive shine levels for decorative & architectural applications.' },
+      { name: 'Mirror Polished', description: 'High-gloss reflective surface for premium installations.' },
+      { name: 'Pickled', description: 'Chemically cleaned surface for industrial piping & fabrication.' },
+    ],
+    glassThickness: [],
+    mountTypes: [
+      { name: '0.3–1.0 mm (Light)', description: 'Decorative trim, light furniture & interior accents.' },
+      { name: '1.0–1.5 mm (Standard)', description: 'Railings, gates, general architectural use.' },
+      { name: '1.5–3.0 mm (Medium)', description: 'Structural frames, handrails & outdoor furniture.' },
+      { name: '3.0–6.0 mm (Heavy)', description: 'Industrial supports, heavy structural frameworks.' },
+      { name: '6.0–20 mm (Extra Heavy)', description: 'Heavy industrial, load-bearing & specialized applications.' },
+    ],
+    applications: [
+      'Structural frames & supports',
+      'Handrails & balustrades',
+      'Gates & fencing',
+      'Furniture & shelving',
+      'Industrial framework',
+      'Architectural accents & facades',
+    ],
+  },
 };
 
 export const getProductSpecs = (slug: string): ProductSpecDetail | null => {
