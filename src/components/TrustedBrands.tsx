@@ -4,6 +4,7 @@ import brandPosco from '@/assets/brand-posco.png';
 import brandViraj from '@/assets/brand-viraj.png';
 import brandTata from '@/assets/brand-tata.png';
 import brandArcelormittal from '@/assets/brand-arcelormittal.png';
+import brandAsbTubes from '@/assets/brand-asb-tubes.png';
 
 const brands = [
   { name: "Jindal Stainless", logo: brandJindal },
@@ -12,6 +13,7 @@ const brands = [
   { name: "Viraj Profiles", logo: brandViraj },
   { name: "TATA Steel", logo: brandTata },
   { name: "ArcelorMittal", logo: brandArcelormittal },
+  { name: "ASB Tubes", logo: brandAsbTubes, link: "https://asbtubes.com/" },
 ];
 
 const TrustedBrands = () => {
@@ -26,24 +28,34 @@ const TrustedBrands = () => {
           <p className="text-muted-foreground mt-2">We supply genuine products from India's leading steel manufacturers</p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
-          {brands.map((brand) => (
-            <div
-              key={brand.name}
-              className="group bg-card border border-border rounded-xl p-4 md:p-6 flex flex-col items-center justify-center text-center hover:border-primary/50 hover:shadow-lg transition-all duration-300"
-            >
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg bg-white flex items-center justify-center mb-3 overflow-hidden">
-                <img 
-                  src={brand.logo} 
-                  alt={brand.name}
-                  className="w-full h-full object-contain p-2"
-                />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 md:gap-6">
+          {brands.map((brand) => {
+            const content = (
+              <>
+                <div className="w-20 h-20 md:w-24 md:h-24 rounded-lg bg-white flex items-center justify-center mb-3 overflow-hidden">
+                  <img 
+                    src={brand.logo} 
+                    alt={brand.name}
+                    className="w-full h-full object-contain p-2"
+                  />
+                </div>
+                <h3 className="font-semibold text-xs md:text-sm text-foreground group-hover:text-primary transition-colors">
+                  {brand.name}
+                </h3>
+              </>
+            );
+            const className = "group bg-card border border-border rounded-xl p-4 md:p-6 flex flex-col items-center justify-center text-center hover:border-primary/50 hover:shadow-lg transition-all duration-300";
+            
+            return brand.link ? (
+              <a key={brand.name} href={brand.link} target="_blank" rel="noopener noreferrer" className={className}>
+                {content}
+              </a>
+            ) : (
+              <div key={brand.name} className={className}>
+                {content}
               </div>
-              <h3 className="font-semibold text-xs md:text-sm text-foreground group-hover:text-primary transition-colors">
-                {brand.name}
-              </h3>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
