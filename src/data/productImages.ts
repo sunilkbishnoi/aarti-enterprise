@@ -85,7 +85,7 @@ export const productGalleryImages: Record<string, string[]> = {
   'glass-clamp': [glassClamp, glassClamp2, glassClamp3],
   'ss-round-pipe': [ssRoundPipe, ssRoundPipeCatalogue, ssRoundPipePolished, ssRoundPipeCloseup],
   'ss-square-pipe': [ssSquarePipe, ssSquarePipePolished, ssSquarePipeStack, ssSquarePipeCloseup],
-  'ss-rect-pipe': [ssRectPipe, ssRectPipeStack, ssRectPipeBrushed],
+  'ss-rect-pipe': [ssRectPipeStack, ssRectPipeBrushed],
 };
 
 // Default fallback image
