@@ -286,6 +286,43 @@ export const productSpecs: Record<string, ProductSpecDetail> = {
       'Fabrication & structural sheet metal',
     ],
   },
+  'ss-sheet-mirror': {
+    variants: [
+      { name: 'Super Mirror 304 Sheet (4×10 ft)', dimensions: '4 × 10 ft', price: 145703, description: 'Large format high-grade mirror sheet for architectural wall cladding or decorative facades.' },
+      { name: '1 mm 304 SS Mirror Polished Plate', dimensions: '1 mm', price: 5101, description: 'Precision polished pieces for prototypes, signage, or interior accents.' },
+      { name: '304 SS 8K Mirror Surface Sheet', dimensions: 'Standard', price: 4665, description: '8K polished sheet with pristine reflective finish for premium interiors.' },
+      { name: '304 SS Sheet 4X Mirror Finish', dimensions: 'Large', price: 16632, description: 'Larger panel with ASTM-standard specification and mirror finish.' },
+      { name: '5 Pcs 304 SS Mirror Surface Sheets', dimensions: 'Pack', price: 8615, description: 'Pack of mirror surface pieces for detailed decorative work.' },
+      { name: '304 Mirror SS Plate 0.5 mm', dimensions: '0.5 mm', price: 8080, description: 'Thin mirror-finish sheet with anti-rust properties for furniture or feature panels.' },
+      { name: '304 SS Mirror Plate for Decoration', dimensions: 'Standard', price: 3920, description: 'Decorative mirror plate for crafts, cabinetry, or signage.' },
+      { name: '304 SS 8K Bright Mirror Sheet', dimensions: 'Standard', price: 3000, description: 'Bright mirror sheet with protective film for finishing and fabrication.' },
+    ],
+    materialGrades: [
+      { name: 'SS 304 / 304L', description: 'General purpose architectural & decorative, good corrosion resistance.' },
+      { name: 'SS 316 / 316L', description: 'Outdoor, coastal or chemical exposure — high corrosion resistance.' },
+      { name: 'SS 202 / 201', description: 'Budget and light decorative applications.' },
+      { name: 'SS 430', description: 'Ferritic grade where magnetic property is acceptable.' },
+    ],
+    finishes: [
+      { name: 'No.8 / 8K Mirror', description: 'Super-bright highly reflective surface comparable to a mirror.' },
+      { name: 'Coloured Mirror (PVD)', description: 'Mirror finish with PVD colour coating (gold, rose gold, black, blue).' },
+    ],
+    glassThickness: [],
+    mountTypes: [
+      { name: '0.3–0.8 mm (Ultra Thin)', description: 'Decorative accents, signage & craft applications.' },
+      { name: '0.8–1.5 mm (Thin)', description: 'Cladding panels, backsplashes & furniture trim.' },
+      { name: '1.5–3.0 mm (Standard)', description: 'Architectural cladding, elevator interiors & wall panels.' },
+      { name: '3.0–4.0 mm+ (Thick)', description: 'Heavy-duty decorative panels & structural facades.' },
+    ],
+    applications: [
+      'Architectural cladding & facades',
+      'Interior decorative panels & accent walls',
+      'Kitchen backsplashes & appliances',
+      'Signage & lettering',
+      'Furniture & retail fixtures',
+      'Elevator interiors & wall panels',
+    ],
+  },
 };
 
 export const getProductSpecs = (slug: string): ProductSpecDetail | null => {

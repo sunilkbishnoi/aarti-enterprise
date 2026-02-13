@@ -17,6 +17,8 @@ import ssOvalPipePolished from '@/assets/products/ss-oval-pipe-polished.png';
 import ssSheetPlain from '@/assets/products/ss-sheet-plain.jpg';
 import ssSheetStack from '@/assets/products/ss-sheet-stack.png';
 import ssSheetMirror from '@/assets/products/ss-sheet-mirror.jpg';
+import ssSheetMirrorPeel from '@/assets/products/ss-sheet-mirror-peel.png';
+import ssSheetMirrorCloseup from '@/assets/products/ss-sheet-mirror-closeup.png';
 import ssSheetHairline from '@/assets/products/ss-sheet-hairline.jpg';
 import designerGold from '@/assets/products/designer-gold.jpg';
 import designerRosegold from '@/assets/products/designer-rosegold.jpg';
@@ -92,6 +94,7 @@ export const productGalleryImages: Record<string, string[]> = {
   'ss-rect-pipe': [ssRectPipeStack, ssRectPipeBrushed],
   'ss-oval-pipe': [ssOvalPipeBrushed, ssOvalPipeGroup, ssOvalPipePolished],
   'ss-sheet-plain': [ssSheetPlain, ssSheetStack],
+  'ss-sheet-mirror': [ssSheetMirror, ssSheetMirrorPeel, ssSheetMirrorCloseup],
 };
 
 // Default fallback image
