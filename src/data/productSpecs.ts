@@ -323,6 +323,46 @@ export const productSpecs: Record<string, ProductSpecDetail> = {
       'Elevator interiors & wall panels',
     ],
   },
+  'ss-sheet-hairline': {
+    variants: [
+      { name: 'SS Hairline Decorative Sheet', dimensions: 'Standard', price: 18880, description: 'Decorative hairline sheet for architectural panels, claddings, interior walls & elevators.' },
+      { name: 'SS304 Silver Hairline Sheet', dimensions: 'Standard', price: 10500, description: 'Classic silver SS304 hairline sheet for premium finishes.' },
+      { name: 'SS Blue Hairline Sheet', dimensions: 'Standard', price: 610, description: 'Colour-tinted hairline finish for decorative uses.' },
+      { name: 'SS304 Black Hairline Sheet', dimensions: 'Standard', price: 9500, description: 'Black SS304 hairline sheet for modern interiors.' },
+      { name: 'SS Gold Hairline Sheet', dimensions: 'Standard', price: 9500, description: 'Gold-tint hairline finish sheet for luxury fixtures.' },
+      { name: 'SS Copper Hairline Sheet', dimensions: 'Standard', price: 8260, description: 'Copper colour steel with hairline texture.' },
+      { name: 'SS Rose Gold Hairline Sheet', dimensions: 'Standard', price: 9500, description: 'Rose gold hairline sheet for premium branding & decor.' },
+      { name: 'SS Hairline Sheet 47 Kg', dimensions: 'Bulk', price: 15040, description: 'Large bulk hairline sheet (weight-based) for construction projects.' },
+    ],
+    materialGrades: [
+      { name: 'SS 304 / 304L', description: 'Most common grade for interior/exterior architectural applications.' },
+      { name: 'SS 316 / 316L', description: 'Superior corrosion resistance for coastal/chemical exposure.' },
+      { name: 'SS 201 / 202', description: 'Budget option for light decorative sheet applications.' },
+      { name: 'SS 430', description: 'Ferritic grade for less corrosive applications.' },
+    ],
+    finishes: [
+      { name: 'Silver Hairline', description: 'Classic brushed linear finish — natural stainless steel tone.' },
+      { name: 'Black Hairline', description: 'PVD coated black with brushed texture for modern interiors.' },
+      { name: 'Gold Hairline', description: 'PVD gold-tint with linear brush for luxury applications.' },
+      { name: 'Rose Gold Hairline', description: 'PVD rose gold finish for premium branding & decor.' },
+      { name: 'Copper / Blue Hairline', description: 'Colour-tinted hairline for specialty decorative work.' },
+    ],
+    glassThickness: [],
+    mountTypes: [
+      { name: '0.3–0.6 mm (Ultra Thin)', description: 'Light decorative panels & signage.' },
+      { name: '0.6–1.0 mm (Thin)', description: 'Cladding, elevator panels & furniture trim.' },
+      { name: '1.0–1.5 mm (Standard)', description: 'Architectural cladding, wall panels & interiors.' },
+      { name: '1.5–3.0 mm (Thick)', description: 'Heavy-duty panels, structural facades & escalator cladding.' },
+    ],
+    applications: [
+      'Architectural cladding & facades',
+      'Elevator panels & cabin interiors',
+      'Kitchen equipment & decor',
+      'Escalator cladding & wall panels',
+      'Hotel, mall & office interiors',
+      'Furniture, fixtures & signage',
+    ],
+  },
 };
 
 export const getProductSpecs = (slug: string): ProductSpecDetail | null => {
