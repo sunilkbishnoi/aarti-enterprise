@@ -247,6 +247,45 @@ export const productSpecs: Record<string, ProductSpecDetail> = {
       'Architectural & decorative features',
     ],
   },
+  'ss-sheet-plain': {
+    variants: [
+      { name: '304 SS Sheets Pack', dimensions: 'Standard', price: 3398, description: 'Pack of precision SS304 sheets for general fabrication or structural use.' },
+      { name: '304 SS Sheet', dimensions: 'Standard', price: 250, description: 'SS304 plain sheet for decoration, cladding, or kitchen equipment.' },
+      { name: 'Jindal SS Sheet', dimensions: 'Standard', price: 245, description: 'Industry brand SS sheet for fabrication and architectural projects.' },
+      { name: '316 SS Sheet', dimensions: 'Standard', price: 355, description: 'Higher corrosion-resistant SS316 for marine, coastal or chemical environments.' },
+      { name: 'Jindal SS304 Sheet (1–2 mm)', dimensions: '1–2 mm', price: 240, description: 'Common thickness range for general industrial and construction.' },
+      { name: 'SS 202 Sheet', dimensions: 'Standard', price: 130, description: 'Budget grade SS202 plain sheet for light and indoor use.' },
+      { name: 'SS Sheets 4×8 ft', dimensions: '4 × 8 ft', price: 250, description: 'Standard 4×8 ft sheet size with corrosion-resistant finish.' },
+      { name: 'SS Plain Sheet 50 Kg', dimensions: 'Bulk', price: 4500, description: 'Bulk sheet option by weight for larger projects.' },
+    ],
+    materialGrades: [
+      { name: 'SS 304 / 304L', description: 'Most common — corrosion-resistant, easy to form & weld; kitchen, automotive, architectural.' },
+      { name: 'SS 316 / 316L', description: 'Higher corrosion resistance for marine, chemical & pharmaceutical industries.' },
+      { name: 'SS 202', description: 'Lower-cost general-purpose sheet for light/indoor applications.' },
+      { name: 'Other (309, 310, 321, 430)', description: 'High-temp or specialized industrial needs.' },
+    ],
+    finishes: [
+      { name: '2B / Cold Rolled', description: 'Smooth, general-purpose finish.' },
+      { name: 'BA (Bright Annealed)', description: 'Brighter reflective finish, cleaner aesthetic.' },
+      { name: 'No.1 (Hot Rolled)', description: 'Mill surface for industrial use.' },
+      { name: 'No.4 / Satin / Brushed', description: 'Architectural interior/exterior aesthetic.' },
+      { name: 'Mirror / No.8', description: 'Highly polished decorative surface.' },
+    ],
+    glassThickness: [],
+    mountTypes: [
+      { name: '0.1–1.0 mm (Thin)', description: 'Cladding, appliance panels & light fabrication.' },
+      { name: '1.0–3.0 mm (Standard)', description: 'General fabrication, kitchen equipment & architectural.' },
+      { name: '3.0–6.0 mm (Medium)', description: 'Structural panels, heavy fabrication & industrial.' },
+      { name: '6.0 mm+ (Plate)', description: 'Heavy-duty industrial use & structural applications.' },
+    ],
+    applications: [
+      'Architectural cladding & decorative panels',
+      'Kitchen & food equipment',
+      'Automotive parts & trim',
+      'Chemical, marine & industrial equipment',
+      'Fabrication & structural sheet metal',
+    ],
+  },
 };
 
 export const getProductSpecs = (slug: string): ProductSpecDetail | null => {
