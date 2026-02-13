@@ -175,6 +175,42 @@ export const productSpecs: Record<string, ProductSpecDetail> = {
       'Architectural accents & facades',
     ],
   },
+  'ss-rect-pipe': {
+    variants: [
+      { name: 'SS Rect Tube 20×30 mm 1.5 mm Wall SS304', dimensions: '20 × 30 mm', price: 25788, description: 'Heavy-duty SS304 rectangular pipe for structural, fabrication & architectural support.' },
+      { name: 'Rectangular Pipe 30×10 mm – Brushed', dimensions: '30 × 10 mm', price: 3700, description: 'Brushed finish for decorative or interior use.' },
+      { name: 'Steel Rect Tubing 2"×3" × .125"', dimensions: '2" × 3"', price: 6494, description: 'Standard rectangular tube section for general fabrication.' },
+      { name: 'SS Rect Pipes 30×20 mm', dimensions: '30 × 20 mm', price: 230, description: 'Basic rectangular pipe for light framing & construction.' },
+      { name: '304 Grade SS Rect Pipe', dimensions: 'Standard', price: 1200, description: 'Economical SS304 rectangular hollow section.' },
+      { name: '1" SS Rectangular Hollow Section', dimensions: '1"', price: 450, description: 'Small section for precision fabrications.' },
+      { name: 'SS Rectangular Pipe (General)', dimensions: 'Standard', price: 1340, description: 'Generic rectangular pipe — confirm dimensions before order.' },
+      { name: '304L SS Rectangular Pipe', dimensions: 'Standard', price: 1900, description: 'SS304L grade for improved weldability & reduced carbide precipitation.' },
+    ],
+    materialGrades: [
+      { name: 'SS 304 / 304L', description: 'Most widely used for general structural, architectural & fabrication work.' },
+      { name: 'SS 316 / 316L', description: 'Higher corrosion resistance; ideal for marine & chemical environments.' },
+      { name: 'SS 201 (Lower Nickel)', description: 'Budget option for light-duty structural uses.' },
+    ],
+    finishes: [
+      { name: 'Mill Finish', description: 'Raw as produced — basic industrial surface.' },
+      { name: 'Brushed / Satin', description: 'Decorative look, reduces visible scratches.' },
+      { name: 'Polished / Mirror', description: 'High finish for architectural appeal.' },
+    ],
+    glassThickness: [],
+    mountTypes: [
+      { name: '0.9–1.5 mm (Light)', description: 'Small sections (10×20 to 15×30 mm) for decorative & light framing.' },
+      { name: '1.5–2.0 mm (Standard)', description: 'Mid-range sections (20×40 to 25×50 mm) for railings & furniture.' },
+      { name: '2.0–3.0 mm (Medium)', description: 'Larger sections (40×60 mm) for structural frames.' },
+      { name: '3.0–5.0 mm (Heavy)', description: 'Large sections (50×100 to 100×200 mm) for heavy structural use.' },
+    ],
+    applications: [
+      'Architectural frameworks & railings',
+      'Furniture & interior fixtures',
+      'Structural support columns & beams',
+      'Automotive & fabrication works',
+      'Marine & chemical industry applications',
+    ],
+  },
 };
 
 export const getProductSpecs = (slug: string): ProductSpecDetail | null => {
