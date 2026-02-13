@@ -211,6 +211,42 @@ export const productSpecs: Record<string, ProductSpecDetail> = {
       'Marine & chemical industry applications',
     ],
   },
+  'ss-oval-pipe': {
+    variants: [
+      { name: 'SS Oval Pipe (Basic)', dimensions: 'Standard', price: 150, description: 'Basic stainless oval pipe for light framing & decorative applications.' },
+      { name: 'SS Oval Pipe (General Purpose)', dimensions: 'Standard', price: 200, description: 'General-purpose SS oval pipe for construction or fabrication.' },
+      { name: '202 SS Oval Pipe', dimensions: 'Standard', price: 180, description: 'SS202 grade for moderate corrosion resistance at lower cost.' },
+      { name: 'Jindal SS Oval/Capsule Polish Pipe', dimensions: 'Capsule', price: 350, description: 'Oval/capsule-shaped polished SS pipe (0.8–1.5 mm wall) for railings or trims.' },
+      { name: 'SS Oval Tube 30 Pcs Pack', dimensions: 'Standard', price: 280, description: 'Pack of SS oval tubes for industrial use or bulk projects.' },
+      { name: 'SS Oval Pipe 30 Kg', dimensions: 'Standard', price: 320, description: 'Bulk weight-based purchase for construction or fabrication jobs.' },
+      { name: 'SS304 Oval Pipe 40 Kg', dimensions: 'Standard', price: 450, description: 'Larger batch of SS304 oval pipes for structural use.' },
+      { name: 'SS Oval Tube (Economy)', dimensions: 'Standard', price: 120, description: 'Affordable SS oval tube option for light use.' },
+    ],
+    materialGrades: [
+      { name: 'SS 304 / 304L', description: 'Good corrosion resistance; widely used in railing, structures, HVAC & general fabrication.' },
+      { name: 'SS 316 / 316L', description: 'Better for outdoor, coastal & marine environments.' },
+      { name: 'SS 201', description: 'Lower-cost option for light, indoor use.' },
+    ],
+    finishes: [
+      { name: 'Mill Finish', description: 'Raw as produced — basic industrial surface.' },
+      { name: 'Brushed / Satin', description: 'Decorative look, reduces visible scratches.' },
+      { name: 'Polished (Mirror/Satin)', description: 'High finish for architectural appeal.' },
+      { name: 'Pickled', description: 'Chemically cleaned surface for industrial use.' },
+    ],
+    glassThickness: [],
+    mountTypes: [
+      { name: '0.9–1.5 mm (Light)', description: 'Decorative, railing trims & light framing.' },
+      { name: '1.5–3.0 mm (Standard)', description: 'Handrails, balustrades & general structural.' },
+      { name: '3.0–6.0 mm (Heavy)', description: 'Structural supports & industrial piping.' },
+    ],
+    applications: [
+      'Handrails & balustrades',
+      'Structural framing & supports',
+      'Exhaust systems & automotive tubing',
+      'Industrial fluid or gas conveyance',
+      'Architectural & decorative features',
+    ],
+  },
 };
 
 export const getProductSpecs = (slug: string): ProductSpecDetail | null => {
